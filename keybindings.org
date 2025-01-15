@@ -1,0 +1,10 @@
+#+title: Keybindings
+
+- spc ff -> Find files -> Also spc .
+- spc h r r -> Reload emacs (when configs are added use this)
+- spc b b -> Search though current available buffers
+- spc b c -> Switch though splits
+- spc b k -> Delete current buffer
+- spc / -> Search for pattern in current proyect
+- C-w v -> Split vertically
+- C-w c -> Delete current split
