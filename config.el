@@ -21,8 +21,22 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
-;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
-;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
+
+;; Custom cursor
+(setq-default cursor-type 'hbar)
+(setq blink-cursor-mode 1)
+(setq blink-cursor-blinks 10)
+(setq evil-normal-state-cursor 'hbar)
+(setq evil-insert-state-cursor 'hbar)
+(setq evil-replace-state-cursor 'hbar)
+(setq evil-visual-state-cursor 'hbar)
+(add-hook 'after-change-major-mode-hook
+          (lambda () (setq cursor-type 'hbar)))
+
+
+(setq doom-font (font-spec :family "monaco" :size 14.5 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "monaco" :size 14.5))
+
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -32,7 +46,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
+(setq doom-theme 'doom-tokyo-night)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -41,28 +55,15 @@
 
 ;; Tabs as spaces tab length tab width
 (setq-default tab-width 2)
+(setq scroll-margin 8)
 
-;; To modify keys (dangerous)
-;; (global-set-key (kbd "j") (lambda () (interactive) (insert "j")))
-;; (global-set-key (kbd "k") (lambda () (interactive) (insert "k")))
-
-;; (setq select-enable-clipboard t)
-;; (setq save-interprogram-paste-before-kill t)
-
-;; Keybind to copy and paste to system clipboard
-(map! :leader
-      :desc "Yank (copy) to system clipboard"
-      "y" #'clipboard-kill-ring-save)
-(map! :leader
-      :desc "Paste from clipboard"
-      "p" #'clipboard-yank)
-
+;; I finally decided to try using default vim keybinds
 (after! evil
   (define-key evil-motion-state-map "j" 'previous-line) ; j mueve hacia arriba
   (define-key evil-motion-state-map "k" 'next-line)     ; k mueve hacia abajo
   (define-key evil-normal-state-map "j" 'previous-line)
   (define-key evil-normal-state-map "k" 'next-line)
-  (define-key evil-visual-state-map "j" 'previous-line)
+  (define-key evil-visual-state-map "j" 'pervious-line)
   (define-key evil-visual-state-map "k" 'next-line))
 
 ;; If you use `org' and don't want your org files in the default location below,
