@@ -26,7 +26,10 @@
    :config
    (org-roam-db-autosync-mode))
 
-(setq org-agenda-files '("~/Notes/roamnotes"))
+(after! org
+  (setq org-agenda-files '("~/Notes/roamnotes"))
+  (setq org-log-done 'time)
+)
 
 (doom! :input
        ;;bidi              ; (tfel ot) thgir etirw uoy gnipleh
