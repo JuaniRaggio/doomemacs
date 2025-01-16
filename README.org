@@ -53,7 +53,7 @@
   + [shift] + [arrow keys] -> Switch through days, also works within a file
   + [enter] -> Insert a schedule mark in current item like this one: SCHEDULEd: < 2025-01-15 Wed>
     - If added a ++[number]d at the end of the < >, the schedule will be repeated every [number] of days for the end of the days
-    - SCHEDULEd: <2025-01-17 Fri 10:00 ++7>--<2025-12-20> -> This will be repeated till 2025-12-20
+    - SCHEDULEd: < 2025-01-17 Fri 10:00 ++7>--< 2025-12-20> -> This will be repeated till 2025-12-20
 
 
 * Org-files editing
