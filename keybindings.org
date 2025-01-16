@@ -1,5 +1,9 @@
 #+title: Keybindings
 
+M == option
+
+- M-! -> Run shell command in current proyect
+
 - spc ff -> Find files -> Also spc .
 - spc h r r -> Reload emacs (when configs are added use this)
 - spc b b -> Search though current available buffers

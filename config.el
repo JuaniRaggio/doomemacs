@@ -22,10 +22,20 @@
 ;; accept. For example:
 ;;
 
+(defun my/disable-company-in-prog-mode ()
+  "Desactiva company-mode en buffers de programación."
+  (company-mode -1))
+
+(add-hook 'prog-mode-hook #'my/disable-company-in-prog-mode)
+(defun my/disable-company-in-terminal ()
+  "Desactiva company-mode en eshell y vterm."
+  (company-mode -1))
+
+(add-hook 'eshell-mode-hook #'my/disable-company-in-terminal)
+(add-hook 'vterm-mode-hook #'my/disable-company-in-terminal)
+
 ;; Custom cursor
 (setq-default cursor-type 'hbar)
-(setq blink-cursor-mode 1)
-(setq blink-cursor-blinks 10)
 (setq evil-normal-state-cursor 'hbar)
 (setq evil-insert-state-cursor 'hbar)
 (setq evil-replace-state-cursor 'hbar)
@@ -37,7 +47,6 @@
 (setq doom-font (font-spec :family "monaco" :size 14.5 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "monaco" :size 14.5))
 
-;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
 ;; refresh your font settings. If Emacs still can't find your font, it likely
@@ -46,7 +55,30 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-tokyo-night)
+;;
+;; Cool themes
+;; Light mode:
+;; (setq doom-theme 'doom-plain)
+;; (setq doom-theme 'doom-earl-grey)
+;;
+;; Dark mode:
+;; (setq doom-theme 'doom-dracula)
+;; (setq doom-theme 'doom-tokyo-night)
+
+(defun my/theme-based-on-time ()
+  "Cambia el tema de Emacs según la hora del día."
+  (let* ((hour (string-to-number (format-time-string "%H")))
+         (is-night (or (>= hour 19) (< hour 7))))
+    (if is-night
+        (load-theme 'doom-tokyo-night t)
+      (load-theme 'doom-earl-grey t))))
+
+;; Ejecuta la función al inicio
+(my/theme-based-on-time)
+
+;; Programa una actualización automática cada hora
+(run-at-time "00:00" 3600 #'my/theme-based-on-time)
+
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -59,12 +91,12 @@
 
 ;; I finally decided to try using default vim keybinds
 (after! evil
-  (define-key evil-motion-state-map "j" 'previous-line) ; j mueve hacia arriba
-  (define-key evil-motion-state-map "k" 'next-line)     ; k mueve hacia abajo
-  (define-key evil-normal-state-map "j" 'previous-line)
-  (define-key evil-normal-state-map "k" 'next-line)
-  (define-key evil-visual-state-map "j" 'pervious-line)
-  (define-key evil-visual-state-map "k" 'next-line))
+  (define-key evil-motion-state-map "j" 'next-line) ; j mueve hacia arriba
+  (define-key evil-motion-state-map "k" 'previous-line)     ; k mueve hacia abajo
+  (define-key evil-normal-state-map "j" 'next-line)
+  (define-key evil-normal-state-map "k" 'previous-line)
+  (define-key evil-visual-state-map "j" 'next-line)
+  (define-key evil-visual-state-map "k" 'previous-line))
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
