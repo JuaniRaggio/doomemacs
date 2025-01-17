@@ -1,67 +1,81 @@
 #+title: Keybindings
 
 * M-[key] == option
-* spc == space_bar
+* SPC == space_bar
 * C-[key] == Control + key
 
+* Helper comands
+- C-h f / SPC c i -> Help function. Describe current function
+- C-h v / SPC c v-> Help variable. Describe current variable
+- SPC l h -> Help for Language server protocol
+- M-x getenv -> Look for an environment variable's value
+- K -> Search documentation of current thing (can choose gh, google, etc)
+- M-x lsp-describe-thing-at-point -> Describes current function/variable
+  + LSP has many options, with M-x or SPC : you can look for them
+
+* Coding -> I figured out that each language server has their own keybindings
+- gd: Get definition. Saltar a la definición de la función o variable.
+- SPC c d: Saltar a las referencias de la función o variable.
+- SPC c R: Rename class/variable/function in proyect
+- SPC c t: Ver la firma o tipo de la función bajo el cursor.
+
 * Command browsing / executing
-- M-x / spc : -> Command palette
+- M-x / SPC : -> Command palette
 - M-! -> Run shell command in current proyect
-- spc h r r -> Reload emacs (when configs are added use this)
+- SPC h r r -> Reload emacs (when configs are added use this)
 
 * Buffer management
-- spc b b -> Search though current available buffers
-- spc b k -> Delete current buffer
+- SPC b b -> Search though current available buffers
+- SPC b k -> Delete current buffer
 
 * Current buffer movement
 - C-w v -> Split vertically
 - C-w c -> Delete current split
-- spc b c -> Switch though splits
+- SPC b c -> Switch though splits and or create one
 
-* File browsing
-- spc ff / spc . / C-x d-> Find files by their path
+* File browsing -> Almost already know them
+- SPC ff / SPC . / C-x d-> Find files by their path
   + If enter is pressed in a directory, the dired opens in full screen.
   + Once in full screen you can edit file/directory names, delete files/directories, etc.
     ** Dired commands **
     - C-x C-q -> Dired-toggle-read-only. This allows us to switch through modes and edit file names as if they were an editable buffer
     - C-c C-c -> To save changes (wdired-finish-edit)
     - C-c [esc] -> To cancel changes
-- spc / -> Search for pattern in current proyect's files. Doesn't work for file names
+- SPC / -> Search for pattern in current proyect's files. Doesn't work for file names
 
-* Magit!
-- spc g g -> To enter an insane gui mode of git
+* Org-roam-mode -> IMPORTANT stuff
+- C-c n f -> Node finder, if not found, it will be created. Nodes == .org files
+- C-c n i -> Insert node link
+- C-c n l -> List backlinks
+- SPC m t -> Toggle options for current item (works in file editing (normal mode))
+
+* Org-agenda -> Marked *** are important
+- SPC o A -> *** Get org agenda options ***
+  + a -> To open agenda of current week
+  + t -> Todo items who are opened (not done)
+  + s -> *Search by keyword* Supports regex
+- SPC m / -> Get a list with all todo occurrencies
+- SPC m d s -> *** (Month day schedule). Opens the org-schedule agenda ***
+  + [shift] + [arrow keys] -> Switch through days, also works within a file
+  + [enter] -> Insert a schedule mark in current item like this one: SCHEDULEd: < 2025-01-15 Wed>
+    - If added a ++[number]d at the end of the < >, the schedule will be repeated every [number] of days for the end of the days
+    - SCHEDULEd: < 2025-01-17 Fri 10:00 ++7>--< 2025-12-20> -> This will be repeated till 2025-12-20
+
+* Org-files editing
+- C-[return] -> (While editing a .org file) Inserts a new item of the current type
+** For todo items:
+- SPC m t t -> Toggle current item as a TODO item
+- [enter] (above a TODO item) -> Toggle done / todo
+** For check-boxes:
+- SPC m x -> Mark as x (mark as done)
+  + If there is a checkbox list within a checkbox, the parent checkbox will be checked if all their sons are checked
+- [/] -> Creates a checkbox counter
+
+* Magit! -> Use ? There is no need to remember them
+- SPC g g -> To enter an insane gui mode of git
   + Inside this mode, press ? for the command palette. Most important commands (at least most used):
     - s -> To stage changes of first/current file
     - S -> To stage all changes
     - u -> To unstage changes of first/current file
     - U -> To unstage all changes
     - c -> To commit changes (a command palette will be shown for options and flags)
-
-* Org-roam-mode
-- C-c n f -> Node finder, if not found, it will be created. Nodes == .org files
-- C-c n i -> Insert node link
-- C-c n l -> List backlinks
-- spc m t -> Toggle options for current item (works in file editing (normal mode))
-
-* Org-agenda
-- spc o A -> Get org agenda options
-  + a -> To open agenda of current week
-  + t -> Todo items who are opened (not done)
-  + s -> *Search by keyword* Supports regex
-- spc m / -> Get a list with all todo occurrencies
-- spc m d s -> (Month day schedule). Opens the org-schedule agenda
-  + [shift] + [arrow keys] -> Switch through days, also works within a file
-  + [enter] -> Insert a schedule mark in current item like this one: SCHEDULEd: < 2025-01-15 Wed>
-    - If added a ++[number]d at the end of the < >, the schedule will be repeated every [number] of days for the end of the days
-    - SCHEDULEd: < 2025-01-17 Fri 10:00 ++7>--< 2025-12-20> -> This will be repeated till 2025-12-20
-
-
-* Org-files editing
-- C-[return] -> (While editing a .org file) Inserts a new item of the current type
-** For todo items:
-- spc m t t -> Toggle current item as a TODO item
-- [enter] (above a TODO item) -> Toggle done / todo
-** For check-boxes:
-- spc m x -> Mark as x (mark as done)
-  + If there is a checkbox list within a checkbox, the parent checkbox will be checked if all their sons are checked
-- [/] -> Creates a checkbox counter

@@ -23,12 +23,13 @@
 ;;
 
 ;; Custom cursor
-(setq evil-normal-state-cursor 'hbar)
-(setq evil-insert-state-cursor 'hbar)
-(setq evil-replace-state-cursor 'hbar)
-(setq evil-visual-state-cursor 'hbar)
+(setq evil-normal-state-cursor 'box)
+(setq evil-insert-state-cursor 'box)
+(setq evil-replace-state-cursor 'box)
+(setq evil-visual-state-cursor 'box)
 (add-hook 'after-change-major-mode-hook
-          (lambda () (setq cursor-type 'hbar)))
+          (lambda () (setq cursor-type 'box)))
+(setq cursor-in-non-selected-windows 'box)
 
 
 (setq doom-font (font-spec :family "monaco" :size 14.5 :weight 'semi-light)
@@ -58,12 +59,9 @@
          (is-night (or (>= hour 19) (< hour 7))))
     (if is-night
         (load-theme 'doom-tokyo-night t)
-      (load-theme 'doom-earl-grey t))))
+      (load-theme 'doom-plain t))))
 
-;; Ejecuta la función al inicio
 (my/theme-based-on-time)
-
-;; Programa una actualización automática cada hora
 (run-at-time "00:00" 3600 #'my/theme-based-on-time)
 
 
@@ -71,6 +69,7 @@
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode t)
+
 
 ;; Tabs as spaces tab length tab width
 (setq-default tab-width 2)
@@ -80,6 +79,13 @@
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/Notes")
 
+(use-package! org-superstar
+  :hook (org-mode . org-superstar-mode)
+  :config
+  ;; Reemplaza asteriscos con símbolos.
+  (setq org-superstar-headline-bullets-list '("◉" "○" "▶" "▷" "◆" "◇"))
+  ;; Opcional: resalta las viñetas de las listas también.
+  (setq org-superstar-item-bullet-alist '((?+ . ?➤) (?- . ?•))))
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
@@ -113,3 +119,29 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
+;; LSP
+;; C/C++ LSP
+(after! lsp-mode
+  (setq lsp-clients-clangd-args '("--header-insertion=never"
+                                  "--header-insertion-decorators=0"
+                                  "--background-index")))
+
+;; Configuración de JAVA_HOME
+(setenv "JAVA_HOME" "/opt/homebrew/opt/openjdk@23")
+
+;; Configuración específica de lsp-java
+(after! lsp-java
+  (setq lsp-java-java-path "/opt/homebrew/opt/openjdk@23/bin/java"
+        lsp-java-jdtls-path "/opt/homebrew/opt/jdtls/bin/jdtls"
+        lsp-java-configuration-runtimes
+        '[(:name "JavaSE-23"
+           :path "/opt/homebrew/opt/openjdk@23"
+           :default t)]))
+;; Opcional: Configurar atajos y otras preferencias
+(map! :map java-mode-map
+      :localleader
+      :desc "Run project" "r" #'lsp-java-build-project
+      :desc "Organize imports" "o" #'lsp-java-organize-imports
+      :desc "Format buffer" "=" #'lsp-format-buffer)
+

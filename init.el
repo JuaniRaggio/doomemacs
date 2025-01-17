@@ -29,6 +29,10 @@
 (setq org-agenda-files '("~/Notes/roamnotes"))
 (setq org-log-done 'time)
 
+
+;; Save last place in file
+(save-place-mode 1)
+
 (doom! :input
        ;;bidi              ; (tfel ot) thgir etirw uoy gnipleh
        ;;chinese
