@@ -13,7 +13,7 @@
 - M-x lsp-describe-thing-at-point -> Describes current function/variable
   + LSP has many options, with M-x or SPC : you can look for them
 
-* Coding -> I figured out that each language server has their own keybindings
+* Coding -> I figured out that each language server has its own keybindings
 - gd: Get definition. Saltar a la definición de la función o variable.
 - SPC c d: Saltar a las referencias de la función o variable.
 - SPC c R: Rename class/variable/function in proyect
