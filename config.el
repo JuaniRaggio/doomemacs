@@ -6,8 +6,8 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
-;; (setq user-full-name "John Doe"
-;;       user-mail-address "john@doe.com")
+(setq user-full-name "Juan Ignacio Raggio"
+      user-mail-address "jotaraggio@icloud.com")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
@@ -22,6 +22,33 @@
 ;; accept. For example:
 ;;
 
+(use-package gcmh
+  :init
+  (setq gcmh-idle-delay 5   ; Recolecta basura después de 5s de inactividad
+        gcmh-high-cons-threshold (* 128 1024 1024)) ; 128 MB en tareas pesadas
+  (gcmh-mode 1))
+
+;; dired config
+(use-package async
+  :config
+  (dired-async-mode 1))
+(setq dired-listing-switches "-alh")
+
+(use-package lsp-mode
+  :init
+  (setq lsp-completion-provider :capf)) ; Usa la capa de completions más rápida.
+
+(setq lsp-ui-doc-enable nil
+      lsp-ui-sideline-enable nil)
+
+;; (use-package corfu
+;;   :init
+;;   (setq corfu-cycle t           ; permite navegar en ciclos
+;;         corfu-auto t            ; completa automáticamente
+;;         corfu-auto-delay 0.2    ; reduce el tiempo de espera
+;;         corfu-auto-prefix 2)    ; requiere mínimo 2 caracteres
+;;   (global-corfu-mode))
+
 ;; Custom cursor
 (setq evil-normal-state-cursor 'box)
 (setq evil-insert-state-cursor 'box)
@@ -32,8 +59,11 @@
 (setq cursor-in-non-selected-windows 'box)
 
 
-(setq doom-font (font-spec :family "monaco" :size 14.5 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "monaco" :size 14.5))
+(setq doom-font (font-spec :family "Comic mono" :size 14.5 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "Comic mono" :size 14.5))
+
+(setq-default line-spacing 4)
+
 
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -44,25 +74,20 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 
-;; Cool themes
-;; Light mode:
-;; (setq doom-theme 'doom-plain)
-;; (setq doom-theme 'doom-earl-grey)
-;;
-;; Dark mode:
-;; (setq doom-theme 'doom-dracula)
-;; (setq doom-theme 'doom-tokyo-night)
+(setq doom-theme 'doom-tokyo-night)
 
-(defun my/theme-based-on-time ()
-  "Cambia el tema de Emacs según la hora del día."
-  (let* ((hour (string-to-number (format-time-string "%H")))
-         (is-night (or (>= hour 19) (< hour 7))))
-    (if is-night
-        (load-theme 'doom-tokyo-night t)
-      (load-theme 'doom-plain t))))
 
-(my/theme-based-on-time)
-(run-at-time "00:00" 3600 #'my/theme-based-on-time)
+;; Function to change automaticalle themes depending of the hour
+;; (defun my/theme-based-on-time ()
+;;   "Cambia el tema de Emacs según la hora del día."
+;;   (let* ((hour (string-to-number (format-time-string "%H")))
+;;          (is-night (or (>= hour 19) (< hour 7))))
+;;     (if is-night
+;;         (load-theme doom-theme 'doom-tokyo-night t)
+;;       (load-theme doom-theme 'doom-solarized-light t))))
+
+;; (my/theme-based-on-time)
+;; (run-at-time "00:00" 3600 #'my/theme-based-on-time)
 
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
@@ -120,6 +145,22 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
+;; Syntax better highlighting and optimizations regex -> tree-sitter
+(use-package! tree-sitter
+  :hook ((c-mode c++-mode java-mode) . tree-sitter-mode)
+  :config
+  (require 'tree-sitter-langs)
+  (global-tree-sitter-mode)
+  ;; Activa el resaltado semántico
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(setq font-lock-maximum-decoration '((c-mode . 1) (c++-mode . 1) (java-mode . 1)))
+(setq font-lock-maximum-size nil)
+(setq jit-lock-defer-time 0.05)  ;; Defer processing slightly
+
+(global-so-long-mode 1)
+
+
 ;; LSP
 ;; C/C++ LSP
 (after! lsp-mode
@@ -127,21 +168,81 @@
                                   "--header-insertion-decorators=0"
                                   "--background-index")))
 
+(after! lsp-mode
+  (require 'dap-cpptools)
+  (setq dap-auto-configure-features '(sessions locals breakpoints expressions repl))
+  (setq dap-cpptools-extension-version "1.14.0")) ;; Versión estable
+
+(after! dap-mode
+  (dap-register-debug-template
+   "C++ Run Configuration"
+   (list :type "cppdbg"
+         :request "launch"
+         :name "C++ Debug"
+         :MIMode "lldb"
+         :program "~/wokspace/Proyects/conways-life-game/a.out"
+         :args []
+         :cwd "~/workspace/Proyects/conways-life-game/"
+         :stopAtEntry t
+         :environment []
+         :externalConsole t)))
+
+(map! :leader
+      (:prefix ("d" . "debug")
+       ;;:desc "Start GDB" "g" #'realgud:gdb
+       :desc "Start LLDB" "l" #'realgud:lldb
+       :desc "DAP Debug" "d" #'dap-debug))
+
+
 ;; Configuración de JAVA_HOME
-(setenv "JAVA_HOME" "/opt/homebrew/opt/openjdk@23")
+(use-package lsp-java
+  :config
+  (add-hook 'java-mode-hook #'lsp)
+  (require 'dap-java)
+  (setq lsp-java-save-actions-organize-imports t
+        lsp-java-format-on-type-enabled t))
 
-;; Configuración específica de lsp-java
 (after! lsp-java
-  (setq lsp-java-java-path "/opt/homebrew/opt/openjdk@23/bin/java"
-        lsp-java-jdtls-path "/opt/homebrew/opt/jdtls/bin/jdtls"
-        lsp-java-configuration-runtimes
-        '[(:name "JavaSE-23"
-           :path "/opt/homebrew/opt/openjdk@23"
-           :default t)]))
-;; Opcional: Configurar atajos y otras preferencias
-(map! :map java-mode-map
-      :localleader
-      :desc "Run project" "r" #'lsp-java-build-project
-      :desc "Organize imports" "o" #'lsp-java-organize-imports
-      :desc "Format buffer" "=" #'lsp-format-buffer)
+  (setq lsp-java-server-install-dir "~/tools/jdtls"
+        lsp-java-workspace-dir "~/workspace/.jdtls"
+        lsp-java-format-settings-url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
+        lsp-java-format-settings-profile "Google"
+        lsp-java-save-actions-organize-imports t))
 
+(add-hook 'java-mode-hook #'lsp-deferred)
+
+;; Java commands LSP
+;; SPC r r -> Rename any symbol
+(map! :after lsp-java
+      :map java-mode-map
+      :leader
+      (:prefix ("r" . "refactor")
+               "r" #'lsp-rename))
+
+(map! :after dap-mode
+      :leader
+      (:prefix ("d" . "debug")
+               "d" #'dap-debug
+               "b" #'dap-breakpoint-toggle
+               "c" #'dap-continue
+               "i" #'dap-step-in
+               "o" #'dap-step-out
+               "n" #'dap-next
+               "e" #'dap-eval))
+
+(map! :after lsp-java
+      :leader
+      (:prefix ("p" . "project")
+               "b" #'lsp-java-build-project
+               "r" #'lsp-java-run))
+
+(map! :after lsp-java
+      :leader
+      "e" #'lsp-java-run)
+
+(map! :after lsp-java
+      :leader
+      (:prefix ("c" . "code actions")
+               "o" #'lsp-java-organize-imports
+               "f" #'lsp-java-format
+               "i" #'lsp-execute-code-action))

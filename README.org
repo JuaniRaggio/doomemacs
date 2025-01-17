@@ -1,8 +1,11 @@
 #+title: Keybindings
 
-* M-[key] == option
-* SPC == space_bar
-* C-[key] == Control + key
+** Doom emacs built-in helper
+*If you press a key and wait some seconds, you will get a helper showing you the options to follow the pressed key*
+
+*** M-[key] == option
+*** SPC == space_bar
+*** C-[key] == Control + key
 
 * Helper comands
 - C-h f / SPC c i -> Help function. Describe current function
@@ -14,6 +17,7 @@
   + LSP has many options, with M-x or SPC : you can look for them
 
 * Coding -> I figured out that each language server has its own keybindings
+- g -> If you wait, you get all the options to follow g
 - gd: Get definition. Saltar a la definición de la función o variable.
 - SPC c d: Saltar a las referencias de la función o variable.
 - SPC c R: Rename class/variable/function in proyect
