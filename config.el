@@ -34,13 +34,6 @@
   (dired-async-mode 1))
 (setq dired-listing-switches "-alh")
 
-(use-package lsp-mode
-  :init
-  (setq lsp-completion-provider :capf)) ; Usa la capa de completions más rápida.
-
-(setq lsp-ui-doc-enable nil
-      lsp-ui-sideline-enable nil)
-
 ;; (use-package corfu
 ;;   :init
 ;;   (setq corfu-cycle t           ; permite navegar en ciclos
@@ -112,6 +105,29 @@
   ;; Opcional: resalta las viñetas de las listas también.
   (setq org-superstar-item-bullet-alist '((?+ . ?➤) (?- . ?•))))
 
+(after! org
+  (setq org-hide-emphasis-markers t)
+  (setq org-pretty-entities t)
+  (setq org-format-latex-options
+        (plist-put org-format-latex-options :scale 2.0))
+  )
+(setq org-startup-with-latex-preview t)
+
+;; Center .org files
+(use-package! visual-fill-column
+  :hook (org-mode . my/org-mode-visual-fill)
+  :config
+  (setq visual-fill-column-width 130
+        visual-fill-column-center-text t))
+
+(defun my/org-mode-visual-fill ()
+  (setq-local visual-fill-column-width 130
+              visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+;; Deactivate line numbers for org mode
+(add-hook 'org-mode-hook (lambda () (display-line-numbers-mode -1)))
+
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
 ;;
@@ -156,14 +172,30 @@
 
 (setq font-lock-maximum-decoration '((c-mode . 1) (c++-mode . 1) (java-mode . 1)))
 (setq font-lock-maximum-size nil)
-(setq jit-lock-defer-time 0.05)  ;; Defer processing slightly
+;; If there is lag in big files, this parameter should be increased
+(setq jit-lock-defer-time 0.5)  ;; Defer processing slightly
 
 (global-so-long-mode 1)
 
+;; More optimizations
+(setq gcmh-high-cons-threshold (* 64 1024 1024)) ; 64MB -> 128MB
+(setq gcmh-idle-delay 3)  ; Reduces to 3 sec
+(setq gcmh-aggressive-compacting t)
+(setq gcmh-low-cons-threshold (* 16 1024 1024))  ; 16 MB
+
 
 ;; LSP
+(use-package lsp-mode
+  :init
+  (setq lsp-completion-provider :capf)) ; Usa la capa de completions más rápida.
+
+(setq lsp-ui-doc-enable nil
+      lsp-ui-sideline-enable nil)
+
 ;; C/C++ LSP
 (after! lsp-mode
+  (setq lsp-enable-indentation nil)
+  (setq lsp-idle-delay 0.500)
   (setq lsp-clients-clangd-args '("--header-insertion=never"
                                   "--header-insertion-decorators=0"
                                   "--background-index")))
