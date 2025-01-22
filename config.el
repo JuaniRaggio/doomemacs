@@ -31,7 +31,7 @@
   (gcmh-mode 1))
 
 ;; Optimization for larger files
-(setq so-long-threshold 1000)
+(setq so-long-threshold 30000)
 ;; Garbage collector will be less agresive so we get a better balance between memory management and performance
 (setq gcmh-aggressive-compacting nil)
 
@@ -40,14 +40,6 @@
   :config
   (dired-async-mode 1))
 (setq dired-listing-switches "-alh")
-
-;; (use-package corfu
-;;   :init
-;;   (setq corfu-cycle t           ; permite navegar en ciclos
-;;         corfu-auto t            ; completa automáticamente
-;;         corfu-auto-delay 0.2    ; reduce el tiempo de espera
-;;         corfu-auto-prefix 2)    ; requiere mínimo 2 caracteres
-;;   (global-corfu-mode))
 
 ;; Custom cursor
 (setq evil-normal-state-cursor 'box)
@@ -186,16 +178,18 @@
   ;; Activa el resaltado semántico
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
-(setq font-lock-maximum-decoration '((c-mode . 1) (c++-mode . 1) (java-mode . 1)))
-(setq font-lock-maximum-size nil)
+(setq font-lock-maximum-decoration nil)
+;;(setq font-lock-maximum-decoration '((c-mode . 1) (c++-mode . 1) (java-mode . 1)))
+;;(setq font-lock-maximum-size nil)
+
 ;; If there is lag in big files, this parameter should be increased
 (setq jit-lock-defer-time 0.5)  ;; Defer processing slightly
 
 (global-so-long-mode 1)
 
 ;; More optimizations
-(setq gcmh-high-cons-threshold (* 64 1024 1024)) ; 64MB -> 128MB
-(setq gcmh-idle-delay 3)  ; Reduces to 3 sec
+(setq gcmh-high-cons-threshold (* 128 1024 1024))
+(setq gcmh-idle-delay 5)  ; Reduces to 3 sec
 (setq gcmh-aggressive-compacting t)
 (setq gcmh-low-cons-threshold (* 16 1024 1024))  ; 16 MB
 
@@ -214,7 +208,7 @@
 ;; C/C++ LSP
 (setq lsp-enable-indentation nil
       lsp-enable-on-type-formatting nil
-      lsp-idle-delay 0.3
+      lsp-idle-delay 0.5
       lsp-clients-clangd-args '("--header-insertion=never"
                                 "--header-insertion-decorators=0"
                                 "--background-index")
