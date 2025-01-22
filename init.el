@@ -29,7 +29,6 @@
 (setq org-agenda-files '("~/Notes/roamnotes"))
 (setq org-log-done 'time)
 
-
 ;; Save last place in file
 (save-place-mode 1)
 
@@ -120,7 +119,7 @@
        magit             ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
-       ;;pdf               ; pdf enhancements
+       pdf               ; pdf enhancements
        ;;prodigy           ; FIXME managing external services & code builders
        ;;terraform         ; infrastructure as code
        ;;tmux              ; an API for interacting with tmux

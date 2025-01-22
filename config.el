@@ -22,11 +22,18 @@
 ;; accept. For example:
 ;;
 
+(setq +doom-dashboard-ascii-banner-fn nil)
+
 (use-package gcmh
   :init
   (setq gcmh-idle-delay 5   ; Recolecta basura después de 5s de inactividad
         gcmh-high-cons-threshold (* 128 1024 1024)) ; 128 MB en tareas pesadas
   (gcmh-mode 1))
+
+;; Optimization for larger files
+(setq so-long-threshold 1000)
+;; Garbage collector will be less agresive so we get a better balance between memory management and performance
+(setq gcmh-aggressive-compacting nil)
 
 ;; dired config
 (use-package async
@@ -69,20 +76,6 @@
 
 (setq doom-theme 'doom-tokyo-night)
 
-
-;; Function to change automaticalle themes depending of the hour
-;; (defun my/theme-based-on-time ()
-;;   "Cambia el tema de Emacs según la hora del día."
-;;   (let* ((hour (string-to-number (format-time-string "%H")))
-;;          (is-night (or (>= hour 19) (< hour 7))))
-;;     (if is-night
-;;         (load-theme doom-theme 'doom-tokyo-night t)
-;;       (load-theme doom-theme 'doom-solarized-light t))))
-
-;; (my/theme-based-on-time)
-;; (run-at-time "00:00" 3600 #'my/theme-based-on-time)
-
-
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type 'relative)
@@ -112,6 +105,29 @@
         (plist-put org-format-latex-options :scale 2.0))
   )
 (setq org-startup-with-latex-preview t)
+
+;; Pdf view
+(setq-default pdf-view-display-size 'fit-width)
+(setq pdf-view-resize-factor 1.1)
+
+(add-hook 'pdf-view-mode-hook
+          (lambda () (display-line-numbers-mode -1)))
+
+(add-hook 'pdf-view-mode-exit-hook
+          (lambda () (display-line-numbers-mode 1)))
+
+(add-hook 'find-file-hook
+          (lambda ()
+            (when (string-match-p "\\.pdf\\'" buffer-file-name)
+              (pdf-tools-install))))
+
+(setq org-file-apps
+      '((auto-mode . emacs)
+        ("\\.pdf\\'" . emacs)))
+
+;; Open automatically pdf-view-mode when a .pdf file is opened
+(setq find-file-visit-truename t)
+(add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
 
 ;; Center .org files
 (use-package! visual-fill-column
@@ -185,6 +201,9 @@
 
 
 ;; LSP
+;; Don't auto install language servers
+(setq lsp-auto-install-servers nil)
+
 (use-package lsp-mode
   :init
   (setq lsp-completion-provider :capf)) ; Usa la capa de completions más rápida.
@@ -193,37 +212,45 @@
       lsp-ui-sideline-enable nil)
 
 ;; C/C++ LSP
-(after! lsp-mode
-  (setq lsp-enable-indentation nil)
-  (setq lsp-idle-delay 0.500)
-  (setq lsp-clients-clangd-args '("--header-insertion=never"
-                                  "--header-insertion-decorators=0"
-                                  "--background-index")))
+(setq lsp-enable-indentation nil
+      lsp-enable-on-type-formatting nil
+      lsp-idle-delay 0.3
+      lsp-clients-clangd-args '("--header-insertion=never"
+                                "--header-insertion-decorators=0"
+                                "--background-index")
+      lsp-clients-clangd-executable "/opt/homebrew/opt/llvm/bin/clangd"
+      lsp-headerline-breadcrumb-enable t)
 
-(after! lsp-mode
-  (require 'dap-cpptools)
-  (setq dap-auto-configure-features '(sessions locals breakpoints expressions repl))
-  (setq dap-cpptools-extension-version "1.14.0")) ;; Versión estable
+;; Dap for C/C++
+(require 'dap-cpptools)
+(setq dap-auto-configure-features '(sessions locals breakpoints expressions repl)
+      dap-cpptools-extension-version "1.14.0")
 
-(after! dap-mode
-  (dap-register-debug-template
-   "C++ Run Configuration"
-   (list :type "cppdbg"
-         :request "launch"
-         :name "C++ Debug"
-         :MIMode "lldb"
-         :program "~/wokspace/Proyects/conways-life-game/a.out"
-         :args []
-         :cwd "~/workspace/Proyects/conways-life-game/"
-         :stopAtEntry t
-         :environment []
-         :externalConsole t)))
+(use-package! dap-mode
+  :after lsp-mode
+  :config
+  (setq dap-auto-configure-features '(sessions locals breakpoints expressions)
+        dap-lldb-debug-program '("/opt/homebrew/opt/llvm/bin/lldb-vscode"))
+
+  ;; Debug templates
+  (dap-register-debug-template "C++ Run Configuration"
+                               (list :type "cppdbg"
+                                     :request "launch"
+                                     :name "Run C++ Program"
+                                     :MIMode "lldb"
+                                     :program "${workspaceFolder}/a.out"
+                                     :cwd "${workspaceFolder}"
+                                     :stopAtEntry t
+                                     :environment []
+                                     :externalConsole nil
+                                     :targetArchitecture "arm64"
+                                     )))
 
 (map! :leader
       (:prefix ("d" . "debug")
-       ;;:desc "Start GDB" "g" #'realgud:gdb
-       :desc "Start LLDB" "l" #'realgud:lldb
-       :desc "DAP Debug" "d" #'dap-debug))
+       :desc "DAP Debug" "d" #'dap-debug
+       :desc "DAP Debug Last" "r" #'dap-debug-restart
+       :desc "DAP Debug Recent" "l" #'dap-debug-last))
 
 
 ;; Configuración de JAVA_HOME
