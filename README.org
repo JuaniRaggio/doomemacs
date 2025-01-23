@@ -7,7 +7,7 @@
 *** SPC == space_bar
 *** C-[key] == Control + key
 
-* Helper comands
+** Helper comands
 - C-h f / SPC c i -> Help function. Describe current function
 - C-h v / SPC c v-> Help variable. Describe current variable
 - SPC l h -> Help for Language server protocol
@@ -16,32 +16,37 @@
 - M-x lsp-describe-thing-at-point -> Describes current function/variable
   + LSP has many options, with M-x or SPC : you can look for them
 
-* Coding -> I figured out that each language server has its own keybindings
+** Editing commands -> Type M-x and you'll get whatever you want
+- M-% -> Query replace. Y -> replace current ocurrency. N -> go next. You can highlight with viewmode and query-replace those lines
+- C-M-% -> Query replace with a regex
+
+** Coding -> I figured out that each language server has its own keybindings
 - g -> If you wait, you get all the options to follow g
 - gd: Get definition. Saltar a la definición de la función o variable.
 - SPC c d: Saltar a las referencias de la función o variable.
 - SPC c R: Rename class/variable/function in proyect
 - SPC c t: Ver la firma o tipo de la función bajo el cursor.
 
-* Exporting pdfs, latex, html
+** Exporting pdfs, latex, html
 Emacs with org mode has the power of exporting .org files to latex, html and if you want to, compile them to pdfs or even creating webpages
 - C-c C-e -> Export current file. Some options are going to be given, you decide whichone to choose. The power is in your hands
 
-* Command browsing / executing
+** Command browsing / executing
 - M-x / SPC : -> Command palette
 - M-! -> Run shell command in current proyect
 - SPC h r r -> Reload emacs (when configs are added use this)
 
-* Buffer management
+** Buffer management
 - SPC b b -> Search though current available buffers
 - SPC b k -> Delete current buffer
 
-* Current buffer movement
+** Current buffer movement
+- SPC w s -> Split buffer horizontally
 - C-w v -> Split vertically
 - C-w c -> Delete current split
 - SPC b c -> Switch though splits and or create one
 
-* File browsing -> Almost already know them
+** File browsing -> Almost already know them
 - SPC ff / SPC . / C-x d-> Find files by their path
   + If enter is pressed in a directory, the dired opens in full screen.
   + Once in full screen you can edit file/directory names, delete files/directories, etc.
@@ -51,13 +56,13 @@ Emacs with org mode has the power of exporting .org files to latex, html and if 
     - C-c [esc] -> To cancel changes
 - SPC / -> Search for pattern in current proyect's files. Doesn't work for file names
 
-* Org-roam-mode -> IMPORTANT stuff
+** Org-roam-mode -> IMPORTANT stuff
 - C-c n f -> Node finder, if not found, it will be created. Nodes == .org files
 - C-c n i -> Insert node link
 - C-c n l -> List backlinks
 - SPC m t -> Toggle options for current item (works in file editing (normal mode))
 
-* Org-agenda -> Marked *** are important
+** Org-agenda -> Marked *** are important
 - SPC o A -> *** Get org agenda options ***
   + a -> To open agenda of current week
   + t -> Todo items who are opened (not done)
@@ -69,17 +74,17 @@ Emacs with org mode has the power of exporting .org files to latex, html and if 
     - If added a ++[number]d at the end of the < >, the schedule will be repeated every [number] of days for the end of the days
     - SCHEDULEd: < 2025-01-17 Fri 10:00 ++7>--< 2025-12-20> -> This will be repeated till 2025-12-20
 
-* Org-files editing
+** Org-files editing
 - C-[return] -> (While editing a .org file) Inserts a new item of the current type
-** For todo items:
+*** For todo items:
 - SPC m t t -> Toggle current item as a TODO item
 - [enter] (above a TODO item) -> Toggle done / todo
-** For check-boxes:
+*** For check-boxes:
 - SPC m x -> Mark as x (mark as done)
   + If there is a checkbox list within a checkbox, the parent checkbox will be checked if all their sons are checked
 - [/] -> Creates a checkbox counter
 
-* Magit! -> Use ? There is no need to remember them
+** Magit! -> Use ? There is no need to remember them
 - SPC g g -> To enter an insane gui mode of git
   + Inside this mode, press ? for the command palette. Most important commands (at least most used):
     - s -> To stage changes of first/current file
