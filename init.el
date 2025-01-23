@@ -32,6 +32,9 @@
 ;; Save last place in file
 (save-place-mode 1)
 
+;; Set python interpreter
+(setq python-shell-interpreter "/opt/homebrew/Cellar/python@3.13/3.13.1/bin/python3")
+
 (doom! :input
        ;;bidi              ; (tfel ot) thgir etirw uoy gnipleh
        ;;chinese
@@ -176,7 +179,7 @@
        ;;plantuml          ; diagrams for confusing people more
        ;;graphviz          ; diagrams for confusing yourself even more
        ;;purescript        ; javascript, but functional
-       ;;python            ; beautiful is better than ugly
+       python            ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
        ;;raku              ; the artist formerly known as perl6

@@ -51,8 +51,8 @@
 (setq cursor-in-non-selected-windows 'box)
 
 
-(setq doom-font (font-spec :family "Comic mono" :size 14.5 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "Comic mono" :size 14.5))
+(setq doom-font (font-spec :family "monaco" :size 14.5 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "monaco" :size 14.5))
 
 (setq-default line-spacing 4)
 
@@ -214,6 +214,15 @@
                                 "--background-index")
       lsp-clients-clangd-executable "/opt/homebrew/opt/llvm/bin/clangd"
       lsp-headerline-breadcrumb-enable t)
+
+(after! python
+        (use-package pyvenv
+        :config
+        (add-hook 'python-mode-hook
+                (lambda ()
+                (let ((venv-path (expand-file-name "venv" (projectile-project-root))))
+                        (when (file-directory-p venv-path)
+                        (pyvenv-activate venv-path)))))))
 
 ;; Dap for C/C++
 (require 'dap-cpptools)

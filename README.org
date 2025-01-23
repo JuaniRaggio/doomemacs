@@ -23,6 +23,10 @@
 - SPC c R: Rename class/variable/function in proyect
 - SPC c t: Ver la firma o tipo de la función bajo el cursor.
 
+* Exporting pdfs, latex, html
+Emacs with org mode has the power of exporting .org files to latex, html and if you want to, compile them to pdfs or even creating webpages
+- C-c C-e -> Export current file. Some options are going to be given, you decide whichone to choose. The power is in your hands
+
 * Command browsing / executing
 - M-x / SPC : -> Command palette
 - M-! -> Run shell command in current proyect
