@@ -13,6 +13,7 @@
 ;; https://github.com/radian-software/straight.el#the-recipe-format
 ;; (package! another-package
 ;;   :recipe (:host github :repo "username/repo"))
+;;
 (package! org-superstar)
 (package! lsp-java)
 (package! visual-fill-column)

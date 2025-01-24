@@ -30,6 +30,7 @@
 ** Exporting pdfs, latex, html
 Emacs with org mode has the power of exporting .org files to latex, html and if you want to, compile them to pdfs or even creating webpages
 - C-c C-e -> Export current file. Some options are going to be given, you decide whichone to choose. The power is in your hands
+- C-c C-x C-l -> LaTeX preview
 
 ** Command browsing / executing
 - M-x / SPC : -> Command palette
