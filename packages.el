@@ -15,6 +15,7 @@
 ;;   :recipe (:host github :repo "username/repo"))
 ;;
 (package! org-superstar)
+(package! evil-mc)
 (package! lsp-java)
 (package! visual-fill-column)
 

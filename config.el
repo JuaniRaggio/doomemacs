@@ -39,21 +39,22 @@
 (use-package async
   :config
   (dired-async-mode 1))
-(setq dired-listing-switches "-alh")
 
 ;; Custom cursor
-(setq evil-normal-state-cursor 'box)
-(setq evil-insert-state-cursor 'box)
-(setq evil-replace-state-cursor 'box)
-(setq evil-visual-state-cursor 'box)
+(setq evil-normal-state-cursor 'hbar)
+(setq evil-insert-state-cursor 'hbar)
+(setq evil-replace-state-cursor 'hbar)
+(setq evil-visual-state-cursor 'hbar)
 (add-hook 'after-change-major-mode-hook
-          (lambda () (setq cursor-type 'box)))
-(setq cursor-in-non-selected-windows 'box)
-
+          (lambda () (setq cursor-type 'hbar)))
+(setq cursor-in-non-selected-windows 'hbar)
+(setq-default cursor-type 'hbar)
+(blink-cursor-mode 1)
 
 (setq doom-font (font-spec :family "monaco" :size 14.5 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "monaco" :size 14.5))
 
+;; Space inbetween lines
 (setq-default line-spacing 4)
 
 
@@ -96,7 +97,9 @@
   (setq org-format-latex-options
         (plist-put org-format-latex-options :scale 2.0))
   )
-(setq org-startup-with-latex-preview t)
+
+;; Just charge latex with C-c C-x C-l
+(setq org-startup-with-latex-preview nil)
 
 ;; Pdf view
 (setq-default pdf-view-display-size 'fit-width)
@@ -134,7 +137,7 @@
   (visual-fill-column-mode 1))
 
 ;; Deactivate line numbers for org mode
-(add-hook 'org-mode-hook (lambda () (display-line-numbers-mode -1)))
+(add-hook 'org-mode-hook (lambda () (display-line-numbers-mode 1)))
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
