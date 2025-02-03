@@ -77,6 +77,8 @@ Emacs with org mode has the power of exporting .org files to latex, html and if 
 
 ** Org-files editing
 - C-[return] -> (While editing a .org file) Inserts a new item of the current type
+- SPC i s -> Open YASnippet options
+  - "keyword" [TAB] -> Inserts a customizable snippet
 *** For todo items:
 - SPC m t t -> Toggle current item as a TODO item
 - [enter] (above a TODO item) -> Toggle done / todo
