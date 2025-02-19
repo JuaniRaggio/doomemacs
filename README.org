@@ -26,6 +26,7 @@
 - SPC c d: Saltar a las referencias de la función o variable.
 - SPC c R: Rename class/variable/function in proyect
 - SPC c t: Ver la firma o tipo de la función bajo el cursor.
+- SPC c k: Ver la documentacion de la funcion actual
 
 ** Exporting pdfs, latex, html
 Emacs with org mode has the power of exporting .org files to latex, html and if you want to, compile them to pdfs or even creating webpages
