@@ -9,6 +9,7 @@
 (setq user-full-name "Juan Ignacio Raggio"
       user-mail-address "jgarciavautrinraggi@itba.edu.ar")
 (setq epa-file-encrypt-to "jgarciavautrinraggi@itba.edu.ar")
+(setq epa-file-decrypt-to "jgarciavautrinraggi@itba.edu.ar")
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
 ;; - `doom-font' -- the primary font to use
@@ -41,14 +42,14 @@
   (dired-async-mode 1))
 
 ;; Custom cursor
-(setq evil-normal-state-cursor 'hbar)
-(setq evil-insert-state-cursor 'hbar)
-(setq evil-replace-state-cursor 'hbar)
-(setq evil-visual-state-cursor 'hbar)
+(setq evil-normal-state-cursor 'box)
+(setq evil-insert-state-cursor 'box)
+(setq evil-replace-state-cursor 'box)
+(setq evil-visual-state-cursor 'box)
 (add-hook 'after-change-major-mode-hook
-          (lambda () (setq cursor-type 'hbar)))
-(setq cursor-in-non-selected-windows 'hbar)
-(setq-default cursor-type 'hbar)
+          (lambda () (setq cursor-type 'box)))
+(setq cursor-in-non-selected-windows 'box)
+(setq-default cursor-type 'box)
 (blink-cursor-mode 1)
 
 (setq doom-font (font-spec :family "monaco" :size 14.5 :weight 'semi-light)
@@ -125,11 +126,11 @@
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
 
 ;; Center .org files
-(use-package! visual-fill-column
-  :hook (org-mode . my/org-mode-visual-fill)
-  :config
-  (setq visual-fill-column-width 130
-        visual-fill-column-center-text t))
+;; (use-package! visual-fill-column
+  ;; :hook (org-mode . my/org-mode-visual-fill)
+  ;; :config
+  ;; (setq visual-fill-column-width 130
+        ;; visual-fill-column-center-text t))
 
 (defun my/org-mode-visual-fill ()
   (setq-local visual-fill-column-width 130
@@ -201,6 +202,10 @@
 ;; Don't auto install language servers
 (setq lsp-auto-install-servers nil)
 
+;; (after! org
+;;   (setq org-todo-keywords
+;;         '((sequence "TODO(t)" "DOUBT(d)" "|" "DONE(d)" "RESOLVED(r)"))))
+
 (use-package lsp-mode
   :init
   (setq lsp-completion-provider :capf)) ; Usa la capa de completions más rápida.
@@ -211,7 +216,6 @@
 ;; C/C++ LSP
 (setq lsp-enable-indentation nil
       lsp-enable-on-type-formatting nil
-      lsp-idle-delay 0.5
       lsp-clients-clangd-args '("--header-insertion=never"
                                 "--header-insertion-decorators=0"
                                 "--background-index")
