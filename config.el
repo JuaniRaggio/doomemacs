@@ -38,6 +38,10 @@
 ;; Garbage collector will be less agresive so we get a better balance between memory management and performance
 (setq gcmh-aggressive-compacting nil)
 
+(use-package lsp-mode
+  :init
+  (setq lsp-completion-provider :corfu)) ; Usa la capa de completions más rápida.
+
 ;; dired config
 (use-package async
   :config
@@ -263,7 +267,6 @@
 (add-hook 'java-mode-hook #'lsp-deferred)
 
 ;; Java commands LSP
-;; SPC r r -> Rename any symbol
 (map! :after lsp-java
       :map java-mode-map
       :leader
