@@ -21,9 +21,10 @@
 ;;
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
-;;
 
-(setq +doom-dashboard-ascii-banner-fn nil)
+(setq lsp-copilot-enable nil)
+
+;; (setq +doom-dashboard-ascii-banner-fn t)
 
 (use-package gcmh
   :init
@@ -33,6 +34,7 @@
 
 ;; Optimization for larger files
 (setq so-long-threshold 30000)
+
 ;; Garbage collector will be less agresive so we get a better balance between memory management and performance
 (setq gcmh-aggressive-compacting nil)
 
@@ -58,7 +60,6 @@
 ;; Space inbetween lines
 (setq-default line-spacing 4)
 
-
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
 ;; refresh your font settings. If Emacs still can't find your font, it likely
@@ -74,7 +75,6 @@
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode t)
-
 
 ;; Tabs as spaces tab length tab width
 (setq-default tab-width 2)
@@ -125,19 +125,12 @@
 (setq find-file-visit-truename t)
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
 
-;; Center .org files
-;; (use-package! visual-fill-column
-  ;; :hook (org-mode . my/org-mode-visual-fill)
-  ;; :config
-  ;; (setq visual-fill-column-width 130
-        ;; visual-fill-column-center-text t))
-
 (defun my/org-mode-visual-fill ()
   (setq-local visual-fill-column-width 130
               visual-fill-column-center-text t)
   (visual-fill-column-mode 1))
 
-;; Deactivate line numbers for org mode
+;; Toggle line numbers for org mode
 (add-hook 'org-mode-hook (lambda () (display-line-numbers-mode 1)))
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
@@ -199,19 +192,8 @@
 
 
 ;; LSP
-;; Don't auto install language servers
+;; Toggle auto install language servers
 (setq lsp-auto-install-servers nil)
-
-;; (after! org
-;;   (setq org-todo-keywords
-;;         '((sequence "TODO(t)" "DOUBT(d)" "|" "DONE(d)" "RESOLVED(r)"))))
-
-(use-package lsp-mode
-  :init
-  (setq lsp-completion-provider :capf)) ; Usa la capa de completions más rápida.
-
-(setq lsp-ui-doc-enable nil
-      lsp-ui-sideline-enable nil)
 
 ;; C/C++ LSP
 (setq lsp-enable-indentation nil
@@ -222,14 +204,14 @@
       lsp-clients-clangd-executable "/opt/homebrew/opt/llvm/bin/clangd"
       lsp-headerline-breadcrumb-enable t)
 
-(after! python
-        (use-package pyvenv
-        :config
-        (add-hook 'python-mode-hook
-                (lambda ()
-                (let ((venv-path (expand-file-name "venv" (projectile-project-root))))
-                        (when (file-directory-p venv-path)
-                        (pyvenv-activate venv-path)))))))
+;;(after! python
+;;        (use-package pyvenv
+;;        :config
+;;        (add-hook 'python-mode-hook
+;;                (lambda ()
+;;                (let ((venv-path (expand-file-name "venv" (projectile-project-root))))
+;;                        (when (file-directory-p venv-path)
+;;                        (pyvenv-activate venv-path)))))))
 
 ;; Dap for C/C++
 (require 'dap-cpptools)
@@ -272,8 +254,8 @@
         lsp-java-format-on-type-enabled t))
 
 (after! lsp-java
-  (setq lsp-java-server-install-dir "~/tools/jdtls"
-        lsp-java-workspace-dir "~/workspace/.jdtls"
+  (setq lsp-java-server-install-dir "~/tools/"
+        lsp-java-workspace-dir "~/workspace/itbaworkspace/objetos/"
         lsp-java-format-settings-url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
         lsp-java-format-settings-profile "Google"
         lsp-java-save-actions-organize-imports t))
