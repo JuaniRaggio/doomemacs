@@ -40,7 +40,7 @@
 
 (use-package lsp-mode
   :init
-  (setq lsp-completion-provider :corfu)) ; Usa la capa de completions más rápida.
+  (setq lsp-completion-provider :capf)) ; Usa la capa de completions más rápida.
 
 ;; dired config
 (use-package async
@@ -258,8 +258,8 @@
         lsp-java-format-on-type-enabled t))
 
 (after! lsp-java
-  (setq lsp-java-server-install-dir "~/tools/"
-        lsp-java-workspace-dir "~/workspace/itbaworkspace/objetos/"
+  (setq lsp-java-server-install-dir "/Users/juaniraggio/.emacs.d/.local/etc/lsp/eclipse.jdt.ls/"
+        lsp-java-workspace-dir "/Users/juaniraggio/.emacs.d/.local/cache/workspace/"
         lsp-java-format-settings-url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
         lsp-java-format-settings-profile "Google"
         lsp-java-save-actions-organize-imports t))
