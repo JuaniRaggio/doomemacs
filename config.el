@@ -24,7 +24,7 @@
 
 (setq lsp-copilot-enable nil)
 
-;; (setq +doom-dashboard-ascii-banner-fn t)
+;;(setq +doom-dashboard-ascii-banner-fn t)
 
 (use-package gcmh
   :init
@@ -176,12 +176,10 @@
   :config
   (require 'tree-sitter-langs)
   (global-tree-sitter-mode)
-  ;; Activa el resaltado semántico
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
 (setq font-lock-maximum-decoration nil)
 ;;(setq font-lock-maximum-decoration '((c-mode . 1) (c++-mode . 1) (java-mode . 1)))
-;;(setq font-lock-maximum-size nil)
 
 ;; If there is lag in big files, this parameter should be increased
 (setq jit-lock-defer-time 0.5)  ;; Defer processing slightly
@@ -207,15 +205,6 @@
                                 "--background-index")
       lsp-clients-clangd-executable "/opt/homebrew/opt/llvm/bin/clangd"
       lsp-headerline-breadcrumb-enable t)
-
-;;(after! python
-;;        (use-package pyvenv
-;;        :config
-;;        (add-hook 'python-mode-hook
-;;                (lambda ()
-;;                (let ((venv-path (expand-file-name "venv" (projectile-project-root))))
-;;                        (when (file-directory-p venv-path)
-;;                        (pyvenv-activate venv-path)))))))
 
 ;; Dap for C/C++
 (require 'dap-cpptools)
