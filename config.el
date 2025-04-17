@@ -22,8 +22,6 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 
-(setq lsp-copilot-enable nil)
-
 ;;(setq +doom-dashboard-ascii-banner-fn t)
 
 (use-package gcmh
@@ -40,7 +38,7 @@
 
 (use-package lsp-mode
   :init
-  (setq lsp-completion-provider :capf)) ; Usa la capa de completions más rápida.
+  (setq lsp-completion-provider :vertico)) ; Usa la capa de completions más rápida.
 
 ;; dired config
 (use-package async
@@ -237,8 +235,6 @@
        :desc "DAP Debug Last" "r" #'dap-debug-restart
        :desc "DAP Debug Recent" "l" #'dap-debug-last))
 
-
-;; Configuración de JAVA_HOME
 (use-package lsp-java
   :config
   (add-hook 'java-mode-hook #'lsp)
@@ -250,10 +246,9 @@
   (setq lsp-java-server-install-dir "/Users/juaniraggio/.emacs.d/.local/etc/lsp/eclipse.jdt.ls/"
         lsp-java-workspace-dir "/Users/juaniraggio/.emacs.d/.local/cache/workspace/"
         lsp-java-format-settings-url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
-        lsp-java-format-settings-profile "Google"
-        lsp-java-save-actions-organize-imports t))
+        lsp-java-format-settings-profile "Google"))
 
-(add-hook 'java-mode-hook #'lsp-deferred)
+;;(add-hook 'java-mode-hook #'lsp-deferred)
 
 ;; Java commands LSP
 (map! :after lsp-java
@@ -261,31 +256,3 @@
       :leader
       (:prefix ("r" . "refactor")
                "r" #'lsp-rename))
-
-(map! :after dap-mode
-      :leader
-      (:prefix ("d" . "debug")
-               "d" #'dap-debug
-               "b" #'dap-breakpoint-toggle
-               "c" #'dap-continue
-               "i" #'dap-step-in
-               "o" #'dap-step-out
-               "n" #'dap-next
-               "e" #'dap-eval))
-
-(map! :after lsp-java
-      :leader
-      (:prefix ("p" . "project")
-               "b" #'lsp-java-build-project
-               "r" #'lsp-java-run))
-
-(map! :after lsp-java
-      :leader
-      "e" #'lsp-java-run)
-
-(map! :after lsp-java
-      :leader
-      (:prefix ("c" . "code actions")
-               "o" #'lsp-java-organize-imports
-               "f" #'lsp-java-format
-               "i" #'lsp-execute-code-action))
