@@ -45,15 +45,15 @@
   :config
   (dired-async-mode 1))
 
-;; Custom cursor
-(setq evil-normal-state-cursor 'box)
-(setq evil-insert-state-cursor 'box)
-(setq evil-replace-state-cursor 'box)
-(setq evil-visual-state-cursor 'box)
-(add-hook 'after-change-major-mode-hook
-          (lambda () (setq cursor-type 'box)))
-(setq cursor-in-non-selected-windows 'box)
-(setq-default cursor-type 'box)
+;; Custom cursor for box everywhere
+;(setq evil-normal-state-cursor 'box)
+;(setq evil-insert-state-cursor 'box)
+;(setq evil-replace-state-cursor 'box)
+;(setq evil-visual-state-cursor 'box)
+;(add-hook 'after-change-major-mode-hook
+;          (lambda () (setq cursor-type 'box)))
+;(setq cursor-in-non-selected-windows 'box)
+;(setq-default cursor-type 'box)
 (blink-cursor-mode 1)
 
 (setq doom-font (font-spec :family "monaco" :size 14.5 :weight 'semi-light)
@@ -71,7 +71,8 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 
-(setq doom-theme 'doom-tokyo-night)
+;; (setq doom-theme 'doom-tokyo-night)
+(setq doom-theme 'doom-bluloco-light)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
