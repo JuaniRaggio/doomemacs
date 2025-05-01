@@ -45,15 +45,7 @@
   :config
   (dired-async-mode 1))
 
-;; Custom cursor for box everywhere
-;(setq evil-normal-state-cursor 'box)
-;(setq evil-insert-state-cursor 'box)
-;(setq evil-replace-state-cursor 'box)
-;(setq evil-visual-state-cursor 'box)
-;(add-hook 'after-change-major-mode-hook
-;          (lambda () (setq cursor-type 'box)))
-;(setq cursor-in-non-selected-windows 'box)
-;(setq-default cursor-type 'box)
+;; Cursor customization
 (blink-cursor-mode 1)
 
 (setq doom-font (font-spec :family "monaco" :size 14.5 :weight 'semi-light)
