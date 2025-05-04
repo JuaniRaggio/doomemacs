@@ -13,7 +13,8 @@
 ;; https://github.com/radian-software/straight.el#the-recipe-format
 ;; (package! another-package
 ;;   :recipe (:host github :repo "username/repo"))
-;;
+
+(package! org-roam)
 (package! org-superstar)
 (package! evil-mc)
 (package! lsp-java)
