@@ -163,14 +163,13 @@
 
 ;; Syntax better highlighting and optimizations regex -> tree-sitter
 (use-package! tree-sitter
-  :hook ((c-mode c++-mode java-mode) . tree-sitter-mode)
+  :hook ((c-mode c++-mode java-mode ruby-mode) . tree-sitter-mode)
   :config
   (require 'tree-sitter-langs)
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
 (setq font-lock-maximum-decoration nil)
-;;(setq font-lock-maximum-decoration '((c-mode . 1) (c++-mode . 1) (java-mode . 1)))
 
 ;; If there is lag in big files, this parameter should be increased
 (setq jit-lock-defer-time 0.5)  ;; Defer processing slightly
@@ -182,7 +181,6 @@
 (setq gcmh-idle-delay 5)  ; Reduces to 3 sec
 (setq gcmh-aggressive-compacting t)
 (setq gcmh-low-cons-threshold (* 16 1024 1024))  ; 16 MB
-
 
 ;; LSP
 ;; Toggle auto install language servers
@@ -196,31 +194,6 @@
                                 "--background-index")
       lsp-clients-clangd-executable "/opt/homebrew/opt/llvm/bin/clangd"
       lsp-headerline-breadcrumb-enable t)
-
-;; Dap for C/C++
-(require 'dap-cpptools)
-(setq dap-auto-configure-features '(sessions locals breakpoints expressions repl)
-      dap-cpptools-extension-version "1.14.0")
-
-(use-package! dap-mode
-  :after lsp-mode
-  :config
-  (setq dap-auto-configure-features '(sessions locals breakpoints expressions)
-        dap-lldb-debug-program '("/opt/homebrew/opt/llvm/bin/lldb-vscode"))
-
-  ;; Debug templates
-  (dap-register-debug-template "C++ Run Configuration"
-                               (list :type "cppdbg"
-                                     :request "launch"
-                                     :name "Run C++ Program"
-                                     :MIMode "lldb"
-                                     :program "${workspaceFolder}/a.out"
-                                     :cwd "${workspaceFolder}"
-                                     :stopAtEntry t
-                                     :environment []
-                                     :externalConsole nil
-                                     :targetArchitecture "arm64"
-                                     )))
 
 (map! :leader
       (:prefix ("d" . "debug")
@@ -240,8 +213,6 @@
         lsp-java-workspace-dir "/Users/juaniraggio/.emacs.d/.local/cache/workspace/"
         lsp-java-format-settings-url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
         lsp-java-format-settings-profile "Google"))
-
-;;(add-hook 'java-mode-hook #'lsp-deferred)
 
 ;; Java commands LSP
 (map! :after lsp-java
