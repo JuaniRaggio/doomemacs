@@ -48,8 +48,8 @@
 ;; Cursor customization
 (blink-cursor-mode 1)
 
-(setq doom-font (font-spec :family "monaco" :size 14.5 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "monaco" :size 14.5))
+(setq doom-font (font-spec :family "Hack Nerd Font Mono" :size 14.5 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "Hack Nerd Font Mono" :size 14.5))
 
 ;; Space inbetween lines
 (setq-default line-spacing 4)
@@ -63,7 +63,9 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 
-;; (setq doom-theme 'doom-tokyo-night)
+;; Light theme
+;; (setq doom-theme 'doom-feather-light)
+;; Dark theme
 (setq doom-theme 'doom-tokyo-night)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
