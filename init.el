@@ -16,15 +16,15 @@
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
- (use-package org-roam
-   :ensure t
-   :custom
-   (org-roam-directory "~/Notes/roamnotes")
-   :bind (("C-c n l" . org-roam-buffer-toggle)
-          ("C-c n f" . org-roam-node-find)
-          ("C-c n i" . org-roam-node-insert))
-   :config
-   (org-roam-db-autosync-mode))
+(use-package org-roam
+  :ensure t
+  :custom
+  (org-roam-directory "~/Notes/roamnotes")
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n i" . org-roam-node-insert))
+  :config
+  (org-roam-db-autosync-mode))
 
 (setq org-agenda-files '("~/Notes/roamnotes"))
 (setq org-log-done 'time)
