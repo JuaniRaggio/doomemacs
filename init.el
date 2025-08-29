@@ -33,7 +33,7 @@
 (save-place-mode 1)
 
 ;; Set python interpreter
-(setq python-shell-interpreter "/opt/homebrew/Cellar/python@3.13/3.13.1/bin/python3")
+(setq python-shell-interpreter "/opt/homebrew/bin/python3")
 
 (doom! :input
        ;;bidi              ; (tfel ot) thgir etirw uoy gnipleh
@@ -170,7 +170,7 @@
        ;;lean              ; for folks with too much to prove
        ;;ledger            ; be audit you can be
        ;;lua               ; one-based indices? one-based indices
-       ;;markdown          ; writing docs for people to ignore
+       markdown          ; writing docs for people to ignore
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel

@@ -48,8 +48,8 @@
 ;; Cursor customization
 (blink-cursor-mode 1)
 
-(setq doom-font (font-spec :family "Hack Nerd Font Mono" :size 14.5 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "Hack Nerd Font Mono" :size 14.5))
+(setq doom-font (font-spec :family "Hack Nerd Font Mono" :size 15 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "Hack Nerd Font Mono" :size 15))
 
 ;; Space inbetween lines
 (setq-default line-spacing 4)
@@ -64,9 +64,9 @@
 ;; `load-theme' function. This is the default:
 
 ;; Light theme
-(setq doom-theme 'doom-plain)
+;; (setq doom-theme 'doom-plain)
 ;; Dark theme
-;; (setq doom-theme 'doom-tokyo-night)
+(setq doom-theme 'doom-moonlight)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
