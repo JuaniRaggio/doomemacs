@@ -74,7 +74,7 @@
 (global-display-line-numbers-mode t)
 
 ;; Tabs as spaces tab length tab width
-(setq-default tab-width 2)
+(setq-default tab-width 8)
 (setq scroll-margin 8)
 
 ;; If you use `org' and don't want your org files in the default location below,
@@ -184,6 +184,16 @@
 (setq gcmh-aggressive-compacting t)
 (setq gcmh-low-cons-threshold (* 16 1024 1024))  ; 16 MB
 
+;; asm x86-lookup config
+(use-package x86-lookup
+  :ensure t
+  :config
+  ;; Path to Intel manuals
+  (setq x86-lookup-pdf "~/workspace/itbaworkspace/arquitectura/Assemblerx86_64/docs/325462-088-sdm-vol-1-2abcd-3abcd-4.pdf"))
+
+(global-set-key (kbd "C-c x") 'x86-lookup)
+
+
 ;; LSP
 ;; Toggle auto install language servers
 (setq lsp-auto-install-servers nil)
@@ -222,3 +232,8 @@
       :leader
       (:prefix ("r" . "refactor")
                "r" #'lsp-rename))
+
+;; Configuración de fuentes para Hangul
+(set-fontset-font t 'hangul
+                  (font-spec :family "Noto Sans CJK KR" 
+                            :size 22))
