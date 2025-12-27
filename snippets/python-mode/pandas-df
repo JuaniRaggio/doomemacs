@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: pandas dataframe
+# key: pdf
+# --
+${1:df} = pd.DataFrame({
+    '${2:column1}': [${3:values}],
+    '${4:column2}': [${5:values}],
+})$0

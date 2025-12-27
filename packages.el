@@ -19,6 +19,7 @@
 (package! evil-mc)
 (package! lsp-java)
 (package! visual-fill-column)
+(package! exec-path-from-shell)  ; Importar PATH y env vars desde la shell del OS
 
 ;; If the package you are trying to install does not contain a PACKAGENAME.el
 ;; file, or is located in a subdirectory of the repo, you'll need to specify

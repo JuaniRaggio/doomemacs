@@ -24,21 +24,133 @@
 
 ;;(setq +doom-dashboard-ascii-banner-fn t)
 
-(use-package gcmh
+;; =============================================================================
+;; IMPORTAR VARIABLES DE ENTORNO DESDE LA SHELL DEL OS
+;; =============================================================================
+;; Esto soluciona el problema de que Emacs GUI en macOS no hereda PATH, etc.
+(use-package! exec-path-from-shell
   :init
-  (setq gcmh-idle-delay 5   ; Recolecta basura después de 5s de inactividad
-        gcmh-high-cons-threshold (* 128 1024 1024)) ; 128 MB en tareas pesadas
-  (gcmh-mode 1))
+  (setq exec-path-from-shell-arguments '("-l" "-i"))
+  ;; Importar TODAS las variables de entorno
+  (setq exec-path-from-shell-check-startup-files nil)
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)
+    ;; Copiar todas las variables del shell
+    (let ((envs (shell-command-to-string
+                 (concat (exec-path-from-shell--shell) " -l -i -c 'env'"))))
+      (dolist (line (split-string envs "\n" t))
+        (when (string-match "^\\([^=]+\\)=\\(.*\\)$" line)
+          (let ((var (match-string 1 line))
+                (val (match-string 2 line)))
+            (unless (member var '("_" "PWD" "SHLVL" "TERM" "TERM_PROGRAM"))
+              (setenv var val))))))))
 
-;; Optimization for larger files
-(setq so-long-threshold 30000)
+;; =============================================================================
+;; OPTIMIZACIONES DE RENDIMIENTO (Consolidado)
+;; =============================================================================
 
-;; Garbage collector will be less agresive so we get a better balance between memory management and performance
-(setq gcmh-aggressive-compacting nil)
+;; Garbage Collection optimizada con gcmh
+(after! gcmh
+  (setq gcmh-idle-delay 'auto  ; default es auto
+        gcmh-auto-idle-delay-factor 10
+        gcmh-high-cons-threshold (* 64 1024 1024)  ; 64 MB (mas estable que 128)
+        gcmh-low-cons-threshold (* 16 1024 1024)   ; 16 MB
+        gc-cons-percentage 0.2))
 
-(use-package lsp-mode
-  :init
-  (setq lsp-completion-provider :vertico)) ; Usa la capa de completions más rápida.
+;; Optimizacion para archivos grandes
+(setq so-long-threshold 20000)
+(setq large-file-warning-threshold (* 50 1024 1024))  ; 50 MB
+
+;; Reducir redisplay para evitar freezes
+(setq redisplay-skip-fontification-on-input t)
+(setq fast-but-imprecise-scrolling t)
+(setq auto-window-vscroll nil)
+
+;; Inhibir compactacion de fuentes (reduce lag)
+(setq inhibit-compacting-font-caches t)
+
+;; Proceso de subprocesos mas eficiente
+(setq read-process-output-max (* 3 1024 1024))  ; 3 MB (importante para LSP)
+(setq process-adaptive-read-buffering nil)
+
+;; Bidirectional text - desactivar si no usas hebreo/arabe
+(setq-default bidi-display-reordering 'left-to-right)
+(setq bidi-inhibit-bpa t)
+
+;; Reducir frecuencia de auto-save para evitar micro-freezes
+(setq auto-save-interval 300)  ; cada 300 caracteres
+(setq auto-save-timeout 60)    ; cada 60 segundos idle
+
+;; =============================================================================
+;; BUSQUEDA TIPO FZF/TELESCOPE
+;; =============================================================================
+(after! vertico
+  (setq vertico-count 15)             ; Mostrar 15 resultados
+  (setq vertico-cycle t))             ; Ciclar resultados
+
+(after! consult
+  ;; Preview automatico al navegar resultados
+  (setq consult-preview-key "any")
+  ;; Usar ripgrep para busquedas (mas rapido)
+  (setq consult-ripgrep-args
+        "rg --null --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --no-heading --line-number --hidden ."))
+
+;; Orderless - busqueda fuzzy estilo fzf (separar terminos con espacio)
+(after! orderless
+  (setq orderless-matching-styles '(orderless-flex orderless-regexp)))
+
+;; =============================================================================
+;; CORFU - COMPLETION RAPIDO TIPO IDE
+;; =============================================================================
+(after! corfu
+  (setq corfu-auto t)                 ; Completions automaticos
+  (setq corfu-auto-delay 0.1)         ; Delay corto (0.1s)
+  (setq corfu-auto-prefix 2)          ; Mostrar despues de 2 caracteres
+  (setq corfu-cycle t)                ; Ciclar entre opciones
+  (setq corfu-preselect 'prompt)      ; No preseleccionar
+  (setq corfu-count 10)               ; Mostrar 10 candidatos max
+  (setq corfu-scroll-margin 3)
+  (setq corfu-quit-no-match 'separator) ; Cerrar si no hay match
+  ;; TAB acepta completion, ENTER inserta newline
+  (define-key corfu-map (kbd "RET") nil)        ; Quitar RET de corfu
+  (define-key corfu-map (kbd "<return>") nil)   ; Quitar return de corfu
+  (define-key corfu-map (kbd "TAB") #'corfu-complete)
+  (define-key corfu-map (kbd "<tab>") #'corfu-complete))
+
+;; Cape - fuentes adicionales de completion
+(after! cape
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev))
+
+;; =============================================================================
+;; SNIPPETS PERSONALIZADOS
+;; =============================================================================
+;; Directorio para tus snippets custom (crear si no existe)
+;; Estructura: ~/.doom.d/snippets/<modo>/<nombre-snippet>
+;; Ejemplo: ~/.doom.d/snippets/python-mode/pandas-df
+(after! yasnippet
+  (setq yas-snippet-dirs
+        (append yas-snippet-dirs
+                '("~/.doom.d/snippets")))  ; Tu directorio de snippets
+  ;; Expandir snippets con TAB
+  (setq yas-triggers-in-field t))
+
+;; LSP optimizado para reducir freezes
+(after! lsp-mode
+  (setq lsp-completion-provider :none)      ; Doom usa su propio sistema
+  (setq lsp-idle-delay 0.5)                 ; Delay antes de procesar (reduce carga)
+  (setq lsp-log-io nil)                     ; Desactivar logging IO
+  (setq lsp-enable-file-watchers nil)       ; Desactivar file watchers (causa freezes)
+  (setq lsp-enable-folding nil)             ; No usar folding de LSP
+  (setq lsp-enable-text-document-color nil) ; Desactivar colores de documento
+  (setq lsp-enable-on-type-formatting nil)  ; No formatear mientras escribes
+  (setq lsp-semantic-tokens-enable nil)     ; Tokens semanticos pueden ser pesados
+  (setq lsp-lens-enable nil)                ; CodeLens puede causar lag
+  (setq lsp-modeline-diagnostics-enable nil); Diagnosticos en modeline causan updates
+  (setq lsp-modeline-code-actions-enable nil)
+  (setq lsp-signature-auto-activate nil)    ; Desactivar firma automatica
+  (setq lsp-signature-render-documentation nil))
 
 ;; dired config
 (use-package async
@@ -94,33 +206,80 @@
   (setq org-pretty-entities t)
   (setq org-format-latex-options
         (plist-put org-format-latex-options :scale 2.0))
-  )
+
+  ;; =============================================================================
+  ;; ORG-BABEL PYTHON CONFIGURATION
+  ;; =============================================================================
+  ;; Activar lenguajes en org-babel
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)
+     (emacs-lisp . t)
+     (shell . t)
+     (C . t)))
+
+  ;; No pedir confirmacion para ejecutar codigo (opcional, quitar si quieres confirmar)
+  (setq org-confirm-babel-evaluate nil)
+
+  ;; Mostrar imagenes inline despues de ejecutar
+  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+
+  ;; SESIONES PERSISTENTES (como Jupyter notebooks)
+  ;; Usar sesion por defecto para Python - todos los bloques comparten estado
+  (setq org-babel-default-header-args:python
+        '((:session . "python")
+          (:results . "output"))))
+
+;; =============================================================================
+;; PYTHON / VIRTUAL ENVIRONMENT PARA ORG-BABEL
+;; =============================================================================
+;; OPCION 1: Configurar un venv por defecto
+;; Cambiar esta ruta a tu virtual environment con pandas instalado
+;; Ejemplo: "~/mi-proyecto/venv/bin/python"
+(defvar my/org-babel-python-command "/opt/homebrew/bin/python3"
+  "Python interpreter para org-babel. Cambiar a la ruta del venv deseado.")
+
+(after! org
+  (setq org-babel-python-command my/org-babel-python-command))
+
+;; Funcion para cambiar Python/venv interactivamente
+(defun my/set-org-babel-python (python-path)
+  "Cambiar el interprete de Python para org-babel."
+  (interactive "fSeleccionar interprete Python: ")
+  (setq org-babel-python-command python-path)
+  (setq my/org-babel-python-command python-path)
+  (message "Org-babel ahora usa: %s" python-path))
+
+;; Funcion para activar un venv rapidamente
+(defun my/activate-venv-for-babel (venv-dir)
+  "Activar un virtual environment para org-babel.
+   VENV-DIR es el directorio del venv (ej: ~/proyecto/venv)"
+  (interactive "DDirectorio del venv: ")
+  (let ((python-path (expand-file-name "bin/python" venv-dir)))
+    (if (file-executable-p python-path)
+        (progn
+          (setq org-babel-python-command python-path)
+          (setq my/org-babel-python-command python-path)
+          (message "Venv activado: %s" python-path))
+      (error "No se encontro Python en: %s" python-path))))
 
 ;; Just charge latex with C-c C-x C-l
 (setq org-startup-with-latex-preview nil)
 
-;; Pdf view
-(setq-default pdf-view-display-size 'fit-width)
-(setq pdf-view-resize-factor 1.1)
+;; PDF-tools optimizado (evitar llamar pdf-tools-install en cada archivo)
+(after! pdf-tools
+  (setq-default pdf-view-display-size 'fit-width)
+  (setq pdf-view-resize-factor 1.1)
+  ;; Renderizado optimizado
+  (setq pdf-view-use-scaling t)
+  (setq pdf-view-use-imagemagick nil))  ; imagemagick es mas lento
 
 (add-hook 'pdf-view-mode-hook
           (lambda () (display-line-numbers-mode -1)))
 
-(add-hook 'pdf-view-mode-exit-hook
-          (lambda () (display-line-numbers-mode 1)))
-
-(add-hook 'find-file-hook
-          (lambda ()
-            (when (string-match-p "\\.pdf\\'" buffer-file-name)
-              (pdf-tools-install))))
-
 (setq org-file-apps
       '((auto-mode . emacs)
         ("\\.pdf\\'" . emacs)))
-
-;; Open automatically pdf-view-mode when a .pdf file is opened
-(setq find-file-visit-truename t)
-(add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
 
 (defun my/org-mode-visual-fill ()
   (setq-local visual-fill-column-width 130
@@ -163,26 +322,21 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-;; Syntax better highlighting and optimizations regex -> tree-sitter
-(use-package! tree-sitter
-  :hook ((c-mode c++-mode java-mode ruby-mode) . tree-sitter-mode)
-  :config
-  (require 'tree-sitter-langs)
-  (global-tree-sitter-mode)
+;; Tree-sitter optimizado (Doom ya lo maneja con el modulo tree-sitter)
+;; Solo necesitamos asegurar que use highlighting
+(after! tree-sitter
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
-(setq font-lock-maximum-decoration nil)
+;; Font-lock optimizado para reducir lag
+(setq font-lock-maximum-decoration t)  ; nil puede causar problemas, usar t
+(setq jit-lock-defer-time 0.05)        ; Valor bajo para mejor respuesta
+(setq jit-lock-stealth-time 1.0)       ; Fontificar en background despues de 1s
+(setq jit-lock-stealth-nice 0.1)       ; Pausa entre chunks
+(setq jit-lock-chunk-size 2000)        ; Chunks mas pequenos
 
-;; If there is lag in big files, this parameter should be increased
-(setq jit-lock-defer-time 0.5)  ;; Defer processing slightly
-
+;; so-long para archivos grandes
 (global-so-long-mode 1)
 
-;; More optimizations
-(setq gcmh-high-cons-threshold (* 128 1024 1024))
-(setq gcmh-idle-delay 5)  ; Reduces to 3 sec
-(setq gcmh-aggressive-compacting t)
-(setq gcmh-low-cons-threshold (* 16 1024 1024))  ; 16 MB
 
 ;; asm x86-lookup config
 (use-package x86-lookup
