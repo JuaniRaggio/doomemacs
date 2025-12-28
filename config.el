@@ -111,12 +111,15 @@
   (setq corfu-preselect 'prompt)      ; No preseleccionar
   (setq corfu-count 10)               ; Mostrar 10 candidatos max
   (setq corfu-scroll-margin 3)
-  (setq corfu-quit-no-match 'separator) ; Cerrar si no hay match
-  ;; TAB acepta completion, ENTER inserta newline
-  (define-key corfu-map (kbd "RET") nil)        ; Quitar RET de corfu
-  (define-key corfu-map (kbd "<return>") nil)   ; Quitar return de corfu
-  (define-key corfu-map (kbd "TAB") #'corfu-complete)
-  (define-key corfu-map (kbd "<tab>") #'corfu-complete))
+  (setq corfu-quit-no-match 'separator)) ; Cerrar si no hay match
+
+;; TAB acepta completion, ENTER inserta newline
+(map! :after corfu
+      :map corfu-map
+      "TAB" #'corfu-insert
+      [tab] #'corfu-insert
+      "RET" nil
+      [return] nil)
 
 ;; Cape - fuentes adicionales de completion
 (after! cape
@@ -136,7 +139,7 @@
   ;; Expandir snippets con TAB
   (setq yas-triggers-in-field t))
 
-;; LSP optimizado para reducir freezes
+;; LSP optimizado para reducir freezes (pero con documentacion)
 (after! lsp-mode
   (setq lsp-completion-provider :none)      ; Doom usa su propio sistema
   (setq lsp-idle-delay 0.5)                 ; Delay antes de procesar (reduce carga)
@@ -149,8 +152,20 @@
   (setq lsp-lens-enable nil)                ; CodeLens puede causar lag
   (setq lsp-modeline-diagnostics-enable nil); Diagnosticos en modeline causan updates
   (setq lsp-modeline-code-actions-enable nil)
-  (setq lsp-signature-auto-activate nil)    ; Desactivar firma automatica
-  (setq lsp-signature-render-documentation nil))
+  ;; Documentacion activada
+  (setq lsp-signature-auto-activate t)      ; Mostrar firma de funciones
+  (setq lsp-signature-render-documentation t) ; Mostrar docs en firma
+  (setq lsp-eldoc-enable-hover t)           ; Hover docs en eldoc
+  (setq lsp-eldoc-render-all t))            ; Mostrar toda la info disponible
+
+;; UI para documentacion
+(after! lsp-ui
+  (setq lsp-ui-doc-enable t)                ; Popup de documentacion
+  (setq lsp-ui-doc-show-with-cursor t)      ; Mostrar al pasar cursor
+  (setq lsp-ui-doc-delay 0.5)               ; Delay de 0.5s
+  (setq lsp-ui-doc-position 'at-point)      ; Posicion del popup
+  (setq lsp-ui-sideline-enable nil)         ; Desactivar sideline (causa lag)
+  (setq lsp-ui-peek-enable t))              ; Peek definitions
 
 ;; dired config
 (use-package async
@@ -224,30 +239,38 @@
   ;; Mostrar imagenes inline despues de ejecutar
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 
-  ;; SESIONES PERSISTENTES (como Jupyter notebooks)
-  ;; Usar sesion por defecto para Python - todos los bloques comparten estado
+  ;; Python en org-babel (sin sesion por defecto - las sesiones tienen bugs)
+  ;; Para usar sesion: agregar :session python al bloque
   (setq org-babel-default-header-args:python
-        '((:session . "python")
-          (:results . "output"))))
+        '((:results . "output replace")
+          (:exports . "both")))
+
+  ;; Fix para sesiones cuando se usen
+  (setq python-shell-completion-native-enable nil))
 
 ;; =============================================================================
 ;; PYTHON / VIRTUAL ENVIRONMENT PARA ORG-BABEL
 ;; =============================================================================
-;; OPCION 1: Configurar un venv por defecto
 ;; Cambiar esta ruta a tu virtual environment con pandas instalado
 ;; Ejemplo: "~/mi-proyecto/venv/bin/python"
 (defvar my/org-babel-python-command "/opt/homebrew/bin/python3"
   "Python interpreter para org-babel. Cambiar a la ruta del venv deseado.")
 
+;; Para sesiones, se usa python-shell-interpreter
+(setq python-shell-interpreter my/org-babel-python-command)
 (after! org
   (setq org-babel-python-command my/org-babel-python-command))
 
 ;; Funcion para cambiar Python/venv interactivamente
 (defun my/set-org-babel-python (python-path)
-  "Cambiar el interprete de Python para org-babel."
+  "Cambiar el interprete de Python para org-babel y sesiones."
   (interactive "fSeleccionar interprete Python: ")
   (setq org-babel-python-command python-path)
+  (setq python-shell-interpreter python-path)
   (setq my/org-babel-python-command python-path)
+  ;; Matar sesion existente para usar el nuevo interprete
+  (when (get-buffer "*Python*")
+    (kill-buffer "*Python*"))
   (message "Org-babel ahora usa: %s" python-path))
 
 ;; Funcion para activar un venv rapidamente
@@ -259,7 +282,11 @@
     (if (file-executable-p python-path)
         (progn
           (setq org-babel-python-command python-path)
+          (setq python-shell-interpreter python-path)
           (setq my/org-babel-python-command python-path)
+          ;; Matar sesion existente para usar el nuevo interprete
+          (when (get-buffer "*Python*")
+            (kill-buffer "*Python*"))
           (message "Venv activado: %s" python-path))
       (error "No se encontro Python en: %s" python-path))))
 
