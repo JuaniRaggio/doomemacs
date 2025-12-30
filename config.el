@@ -91,7 +91,7 @@
 
 (after! consult
   ;; Preview automatico al navegar resultados
-  (setq consult-preview-key "any")
+  (setq consult-preview-key 'any)
   ;; Usar ripgrep para busquedas (mas rapido)
   (setq consult-ripgrep-args
         "rg --null --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --no-heading --line-number --hidden ."))
@@ -201,7 +201,7 @@
 (global-display-line-numbers-mode t)
 
 ;; Tabs as spaces tab length tab width
-(setq-default tab-width 8)
+(setq-default tab-width 4)
 (setq scroll-margin 8)
 
 ;; If you use `org' and don't want your org files in the default location below,
