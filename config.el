@@ -24,6 +24,10 @@
 
 ;;(setq +doom-dashboard-ascii-banner-fn t)
 
+;; Comentar region o linea con SPC #
+(map! :leader
+      "#" #'comment-line)
+
 ;; =============================================================================
 ;; IMPORTAR VARIABLES DE ENTORNO DESDE LA SHELL DEL OS
 ;; =============================================================================
