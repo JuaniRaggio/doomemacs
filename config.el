@@ -86,6 +86,12 @@
 (setq auto-save-interval 300)  ; cada 300 caracteres
 (setq auto-save-timeout 60)    ; cada 60 segundos idle
 
+;; Auto-revert: recargar buffers cuando el archivo cambia en disco
+(global-auto-revert-mode 1)
+(setq auto-revert-interval 1)           ; Chequear cada 1 segundo
+(setq auto-revert-check-vc-info t)      ; Actualizar info de version control
+(setq global-auto-revert-non-file-buffers t) ; Tambien para dired, etc.
+
 ;; =============================================================================
 ;; BUSQUEDA TIPO FZF/TELESCOPE
 ;; =============================================================================
@@ -179,8 +185,8 @@
 ;; Cursor customization
 (blink-cursor-mode 1)
 
-(setq doom-font (font-spec :family "Hack Nerd Font Mono" :size 15 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "Hack Nerd Font Mono" :size 15))
+(setq doom-font (font-spec :family "Sometype Mono" :size 16 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "Sometype Mono" :size 16))
 
 ;; Space inbetween lines
 (setq-default line-spacing 4)
@@ -197,7 +203,7 @@
 ;; Light theme
 ;; (setq doom-theme 'doom-plain)
 ;; Dark theme
-(setq doom-theme 'doom-moonlight)
+(setq doom-theme 'doom-tomorrow-night)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
