@@ -203,7 +203,7 @@
 ;; Light theme
 ;; (setq doom-theme 'doom-plain)
 ;; Dark theme
-(setq doom-theme 'doom-tomorrow-night)
+(setq doom-theme 'doom-solarized-dark)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -388,6 +388,11 @@
 ;; LSP
 ;; Toggle auto install language servers
 (setq lsp-auto-install-servers nil)
+
+;; Format buffer with LSP
+(map! :leader
+      (:prefix "f"
+       :desc "Format buffer (LSP)" "t" #'lsp-format-buffer))
 
 ;; C/C++ LSP
 (setq lsp-enable-indentation nil
