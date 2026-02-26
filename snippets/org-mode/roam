@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: Org-roam node template
+# key: roam
+# --
+:PROPERTIES:
+:ID: `(org-id-new)`
+:END:
+#+title: ${1:titulo}
+#+filetags: :${2:tag}:
+
+$0

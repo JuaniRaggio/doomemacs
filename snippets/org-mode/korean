@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: Korean document template
+# key: korean
+# --
+#+TITLE: ${1:한국어}
+#+AUTHOR: Juan Ignacio Raggio
+#+DATE: `(format-time-string "%d/%m/%Y")`
+#+OPTIONS: toc:t num:t
+#+STARTUP: overview
+
+*학생:* Juan Ignacio Raggio | *선생님:* 서송은
+
+-----
+
+* ${2:수업 주제}
+$0

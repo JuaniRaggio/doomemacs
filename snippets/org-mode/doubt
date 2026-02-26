@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: Duda (pregunta y respuesta)
+# key: doubt
+# --
+#+begin_quote
+*Pregunta:* $1
+
+-----
+
+*Respuesta:* $2
+#+end_quote
+$0

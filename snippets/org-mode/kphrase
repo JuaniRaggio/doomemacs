@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Korean phrase breakdown
+# key: kphrase
+# --
+| ${1:한국어} | ${2:significado} |
+|---+---|
+| ${3:parte} | ${4:explicacion} |
+$0

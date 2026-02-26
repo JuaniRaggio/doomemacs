@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Error comun box
+# key: error
+# --
+#+begin_quote
+*Error Comun:* $1
+#+end_quote
+$0

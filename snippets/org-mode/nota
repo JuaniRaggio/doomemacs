@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Nota box
+# key: nota
+# --
+#+begin_quote
+*Nota:* $1
+#+end_quote
+$0

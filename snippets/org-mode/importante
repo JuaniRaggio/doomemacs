@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Importante box
+# key: importante
+# --
+#+begin_warning
+*Importante:* $1
+#+end_warning
+$0

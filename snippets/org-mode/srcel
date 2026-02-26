@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Emacs Lisp source block
+# key: srcel
+# --
+#+begin_src emacs-lisp
+$1
+#+end_src
+$0

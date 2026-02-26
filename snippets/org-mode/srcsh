@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Shell source block
+# key: srcsh
+# --
+#+begin_src shell
+$1
+#+end_src
+$0
