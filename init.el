@@ -26,6 +26,7 @@
        vc                ; version-control basico
 
        :tools
+       lsp               ; language server protocol
        magit             ; git porcelain
        pdf               ; pdf-tools (para x86 manual y org)
 
@@ -33,6 +34,7 @@
        (:if (featurep :system 'macos) macos)
 
        :lang
+       (cc +lsp)         ; C/C++ con clangd
        emacs-lisp        ; necesario para config de doom
        (org +roam2)      ; org-mode con org-roam v2
        sh                ; shell scripts

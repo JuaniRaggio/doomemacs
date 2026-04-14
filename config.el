@@ -31,8 +31,8 @@
 ;; Font caches
 (setq inhibit-compacting-font-caches t)
 
-;; Subprocess output (1 MB suficiente sin LSP)
-(setq read-process-output-max (* 1024 1024))
+;; Subprocess output (3 MB para LSP)
+(setq read-process-output-max (* 3 1024 1024))
 (setq process-adaptive-read-buffering nil)
 
 ;; Bidirectional text desactivado
@@ -72,7 +72,7 @@
 ;; =============================================================================
 (setq doom-font (font-spec :family "Sometype Mono" :size 16 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "Sometype Mono" :size 16))
-(setq doom-theme 'doom-nova)
+(setq doom-theme 'doom-oksolar-dark)
 
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode t)
@@ -107,18 +107,21 @@
         corfu-count 10
         corfu-quit-no-match 'separator))
 
-;; TAB acepta completion, ENTER inserta newline
-(map! :after corfu
-      :map corfu-map
-      "TAB" #'corfu-insert
-      [tab] #'corfu-insert
-      "RET" nil
-      [return] nil)
+;; TAB/C-y acepta completion, C-n/C-p navega, ENTER inserta newline
+(after! corfu
+  (evil-make-overriding-map corfu-map 'insert)
+  (define-key corfu-map (kbd "C-y") #'corfu-insert)
+  (define-key corfu-map (kbd "C-n") #'corfu-next)
+  (define-key corfu-map (kbd "C-p") #'corfu-previous)
+  (define-key corfu-map (kbd "TAB") #'corfu-insert)
+  (define-key corfu-map [tab] #'corfu-insert)
+  (define-key corfu-map (kbd "RET") nil)
+  (define-key corfu-map [return] nil))
 
-;; Cape - fuentes adicionales de completion
+;; Cape - fuentes adicionales de completion (al final para no pisar LSP)
 (after! cape
-  (add-to-list 'completion-at-point-functions #'cape-file)
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev))
+  (add-to-list 'completion-at-point-functions #'cape-file t)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev t))
 
 ;; =============================================================================
 ;; VERTICO / CONSULT (busqueda tipo telescope)
