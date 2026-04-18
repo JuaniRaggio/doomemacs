@@ -31,8 +31,8 @@
 ;; Font caches
 (setq inhibit-compacting-font-caches t)
 
-;; Subprocess output (3 MB para LSP)
-(setq read-process-output-max (* 3 1024 1024))
+;; Subprocess output (4 MB para clangd - manda payloads grandes con completion-style=detailed)
+(setq read-process-output-max (* 4 1024 1024))
 (setq process-adaptive-read-buffering nil)
 
 ;; Bidirectional text desactivado
@@ -43,8 +43,7 @@
 (setq auto-save-interval 300
       auto-save-timeout 60)
 
-;; Auto-revert (intervalo relajado para menos overhead)
-(global-auto-revert-mode 1)
+;; Auto-revert (Doom ya activa global-auto-revert-mode, solo tuneamos)
 (setq auto-revert-interval 3
       auto-revert-check-vc-info nil
       global-auto-revert-non-file-buffers t)
@@ -64,7 +63,8 @@
 (use-package! exec-path-from-shell
   :config
   (when (memq window-system '(mac ns x))
-    (setq exec-path-from-shell-arguments '("-l"))
+    (setq exec-path-from-shell-arguments '("-l")
+          exec-path-from-shell-variables '("PATH"))
     (exec-path-from-shell-initialize)))
 
 ;; =============================================================================
@@ -75,7 +75,6 @@
 (setq doom-theme 'doom-oksolar-dark)
 
 (setq display-line-numbers-type 'relative)
-(global-display-line-numbers-mode t)
 
 (setq-default tab-width 4)
 (setq-default line-spacing 4)
@@ -124,6 +123,48 @@
   (add-to-list 'completion-at-point-functions #'cape-dabbrev t))
 
 ;; =============================================================================
+;; LSP - CONFIGURACION GENERAL
+;; =============================================================================
+(after! lsp-mode
+  (setq lsp-idle-delay 0.5                        ; no enviar requests en cada keystroke
+        lsp-log-io nil                             ; desactivar logging de IO (costo alto)
+        lsp-enable-file-watchers nil               ; clangd tiene su propio file watcher
+        lsp-enable-folding nil                     ; usamos fold de evil, no LSP
+        lsp-enable-text-document-color nil
+        lsp-enable-on-type-formatting nil          ; no reformatear mientras tipeo
+        lsp-headerline-breadcrumb-enable nil       ; elimina rendering overhead del breadcrumb
+        lsp-enable-snippet t                       ; snippets para function arg placeholders
+        lsp-completion-show-detail t               ; mostrar type info en completions
+        lsp-completion-show-kind t                 ; mostrar kind (function, variable, etc)
+        lsp-completion-enable-additional-text-edit t ; permite auto-import al aceptar completion
+        lsp-signature-auto-activate '(:on-trigger-char)  ; solo mostrar signature al tipear (
+        lsp-signature-render-documentation nil))   ; no renderizar docs en signature (mas rapido)
+
+;; Diagnosticos inline (lsp-ui)
+(after! lsp-ui
+  (setq lsp-ui-sideline-show-diagnostics t         ; errores/warnings al final de la linea
+        lsp-ui-sideline-show-code-actions t         ; code actions inline (quick fixes)
+        lsp-ui-sideline-delay 0.3                  ; delay antes de mostrar (no saturar)
+        lsp-ui-sideline-update-mode 'line          ; actualizar al cambiar de linea
+        lsp-ui-doc-enable nil                      ; desactivar doc popup (overhead de rendering)
+        lsp-ui-peek-enable t))
+
+;; =============================================================================
+;; CLANGD - C/C++
+;; =============================================================================
+(after! lsp-clangd
+  (setq lsp-clients-clangd-args
+        '("--background-index"               ; indexar en background para completions rapidas
+          "--clang-tidy"                      ; diagnosticos de clang-tidy
+          "--completion-style=detailed"       ; info detallada en cada completion item
+          "--header-insertion=iwyu"           ; auto-include headers (Include What You Use)
+          "--pch-storage=memory"              ; precompiled headers en RAM (mas rapido)
+          "-j=4"                              ; 4 workers para indexing (8 cores / 2)
+          "--fallback-style=llvm"             ; estilo de formato por defecto
+          "--function-arg-placeholders"       ; placeholders para args (funciona con yasnippet)
+          "--all-scopes-completion")))        ; completar simbolos de todos los scopes
+
+;; =============================================================================
 ;; VERTICO / CONSULT (busqueda tipo telescope)
 ;; =============================================================================
 (after! vertico
@@ -136,7 +177,10 @@
         "rg --null --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --no-heading --line-number --hidden ."))
 
 (after! orderless
-  (setq orderless-matching-styles '(orderless-flex orderless-regexp)))
+  ;; literal primero: prioriza matches exactos (mejor para code completion)
+  ;; regexp segundo: para busquedas con patrones
+  ;; flex ultimo: fallback fuzzy (caracteres en cualquier orden)
+  (setq orderless-matching-styles '(orderless-literal orderless-regexp orderless-flex)))
 
 ;; =============================================================================
 ;; SNIPPETS

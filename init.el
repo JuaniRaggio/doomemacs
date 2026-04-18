@@ -37,6 +37,7 @@
        (cc +lsp)         ; C/C++ con clangd
        emacs-lisp        ; necesario para config de doom
        (org +roam2)      ; org-mode con org-roam v2
+       (python +lsp)     ; python con pyright/pylsp
        sh                ; shell scripts
 
        :config

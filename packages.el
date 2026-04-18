@@ -5,4 +5,3 @@
 (package! visual-fill-column)
 (package! exec-path-from-shell)
 (package! x86-lookup)
-(package! evil-mc)
