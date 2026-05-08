@@ -70,8 +70,8 @@
 ;; =============================================================================
 ;; APARIENCIA
 ;; =============================================================================
-(setq doom-font (font-spec :family "Sometype Mono" :size 16 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "Sometype Mono" :size 16))
+(setq doom-font (font-spec :family "sometype mono" :size 18 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "sometype mono" :size 18))
 (setq doom-theme 'doom-oksolar-dark)
 
 (setq display-line-numbers-type 'relative)
@@ -83,7 +83,7 @@
 
 ;; Hangul fonts
 (set-fontset-font t 'hangul
-                  (font-spec :family "Noto Sans CJK KR" :size 22))
+                  (font-spec :family "Noto Sans CJK KR" :size 23))
 
 ;; Maximizar frame
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -93,6 +93,11 @@
 
 ;; Comentar con SPC #
 (map! :leader "#" #'comment-line)
+
+;; Formatear archivo con SPC f t
+(map! :leader
+      (:prefix ("f" . "file")
+       :desc "Format buffer" "t" #'+format/buffer))
 
 ;; =============================================================================
 ;; CORFU - COMPLETION
@@ -299,3 +304,30 @@
 (use-package! async
   :config
   (dired-async-mode 1))
+
+;; =============================================================================
+;; AVY - NAVEGACION RAPIDA
+;; =============================================================================
+(use-package! avy
+  :config
+  (setq avy-all-windows nil              ; solo buscar en ventana actual
+        avy-background t                  ; oscurecer texto no-target
+        avy-timeout-seconds 0.5)          ; timeout para avy-goto-char-timer
+
+  ;; Keybindings estilo flash.nvim con evil-mode
+  (map! :nv "s" #'avy-goto-char-timer     ; s + chars = buscar
+        :nv "S" #'avy-goto-line)          ; S = linea
+
+  ;; Leader keybindings adicionales
+  (map! :leader
+        (:prefix ("j" . "jump")
+         :desc "Avy jump to char"  "j" #'avy-goto-char-timer
+         :desc "Avy jump to line"  "l" #'avy-goto-line
+         :desc "Avy jump to word"  "w" #'avy-goto-word-1)))
+
+;; =============================================================================
+;; TYPST
+;; =============================================================================
+(use-package! typst-mode
+  :mode ("\\.typ\\'" . typst-mode)
+  :hook (typst-mode . display-line-numbers-mode))
