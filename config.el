@@ -70,8 +70,8 @@
 ;; =============================================================================
 ;; APARIENCIA
 ;; =============================================================================
-(setq doom-font (font-spec :family "sometype mono" :size 18 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "sometype mono" :size 18))
+(setq doom-font (font-spec :family "D2Coding" :size 18 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "D2Coding" :size 18))
 (setq doom-theme 'doom-plain)
 
 (setq display-line-numbers-type 'relative)
@@ -83,7 +83,7 @@
 
 ;; Hangul fonts
 (set-fontset-font t 'hangul
-                  (font-spec :family "Noto Sans CJK KR" :size 23))
+                  (font-spec :family "D2Coding" :size 23))
 
 ;; Maximizar frame
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
