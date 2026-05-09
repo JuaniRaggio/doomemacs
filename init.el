@@ -25,6 +25,9 @@
        undo              ; persistent undo
        vc                ; version-control basico
 
+       :checkers
+       (spell +jinx)     ; spell checking con jinx (coreano + ingles)
+
        :tools
        lsp               ; language server protocol
        magit             ; git porcelain

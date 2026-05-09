@@ -7,3 +7,5 @@
 (package! x86-lookup)
 (package! avy)
 (package! typst-mode)
+(package! google-translate)
+(package! osx-dictionary)

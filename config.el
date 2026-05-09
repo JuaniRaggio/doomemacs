@@ -72,7 +72,7 @@
 ;; =============================================================================
 (setq doom-font (font-spec :family "sometype mono" :size 18 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "sometype mono" :size 18))
-(setq doom-theme 'doom-oksolar-dark)
+(setq doom-theme 'doom-plain)
 
 (setq display-line-numbers-type 'relative)
 
@@ -331,3 +331,50 @@
 (use-package! typst-mode
   :mode ("\\.typ\\'" . typst-mode)
   :hook (typst-mode . display-line-numbers-mode))
+
+;; =============================================================================
+;; KOREAN LANGUAGE SUPPORT
+;; =============================================================================
+
+;; Spell checking con Jinx (coreano + ingles)
+(after! jinx
+  (setq jinx-languages "en_US ko_KR")
+  (add-hook 'text-mode-hook #'jinx-mode)
+  (add-hook 'org-mode-hook #'jinx-mode)
+
+  (map! :leader
+        (:prefix ("s" . "spell")
+         :desc "Correct word" "c" #'jinx-correct
+         :desc "Next error"   "n" #'jinx-next
+         :desc "Previous"     "p" #'jinx-previous)))
+
+;; Traduccion inline con google-translate (coreano <-> espanol)
+(use-package! google-translate
+  :defer t
+  :commands (google-translate-smooth-translate
+             google-translate-at-point
+             google-translate-query-translate)
+  :init
+  ;; Configurar idiomas por defecto antes de cargar
+  (setq google-translate-default-source-language "ko"
+        google-translate-default-target-language "es"
+        google-translate-translation-directions-alist
+        '(("ko" . "es") ("es" . "ko") ("en" . "ko") ("ko" . "en")))
+
+  ;; Keybindings
+  (map! :leader
+        (:prefix ("t" . "translate")
+         :desc "Translate smooth"     "t" #'google-translate-smooth-translate
+         :desc "Translate at point"   "p" #'google-translate-at-point
+         :desc "Translate query"      "q" #'google-translate-query-translate)))
+
+;; Diccionario macOS como fallback
+(use-package! osx-dictionary
+  :defer t
+  :commands (osx-dictionary-search-word-at-point
+             osx-dictionary-search-input)
+  :init
+  (map! :leader
+        (:prefix ("d" . "dictionary")
+         :desc "Search word at point" "d" #'osx-dictionary-search-word-at-point
+         :desc "Search input"         "i" #'osx-dictionary-search-input)))
