@@ -33,6 +33,9 @@
        magit             ; git porcelain
        pdf               ; pdf-tools (para x86 manual y org)
 
+       :term
+       vterm             ; emulador de terminal (mejor que eshell/term)
+
        :os
        (:if (featurep :system 'macos) macos)
 

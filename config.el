@@ -72,7 +72,7 @@
 ;; =============================================================================
 (setq doom-font (font-spec :family "D2Coding" :size 18 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "D2Coding" :size 18))
-(setq doom-theme 'doom-plain)
+(setq doom-theme 'doom-tokyo-night)
 
 (setq display-line-numbers-type 'relative)
 
@@ -111,14 +111,14 @@
         corfu-count 10
         corfu-quit-no-match 'separator))
 
-;; TAB/C-y acepta completion, C-n/C-p navega, ENTER inserta newline
+;; C-y acepta completion, C-n/C-p navega, TAB/ENTER no afectan
 (after! corfu
   (evil-make-overriding-map corfu-map 'insert)
   (define-key corfu-map (kbd "C-y") #'corfu-insert)
   (define-key corfu-map (kbd "C-n") #'corfu-next)
   (define-key corfu-map (kbd "C-p") #'corfu-previous)
-  (define-key corfu-map (kbd "TAB") #'corfu-insert)
-  (define-key corfu-map [tab] #'corfu-insert)
+  (define-key corfu-map (kbd "TAB") nil)
+  (define-key corfu-map [tab] nil)
   (define-key corfu-map (kbd "RET") nil)
   (define-key corfu-map [return] nil))
 
@@ -194,7 +194,12 @@
   (setq yas-snippet-dirs
         (append yas-snippet-dirs
                 '("~/.doom.d/snippets")))
-  (setq yas-triggers-in-field t))
+  (setq yas-triggers-in-field t)
+
+  ;; TAB expande snippets cuando no hay completion activa
+  (map! :map yas-minor-mode-map
+        :i "TAB" #'yas-expand-from-trigger-key
+        :i "<tab>" #'yas-expand-from-trigger-key))
 
 ;; =============================================================================
 ;; ORG MODE
@@ -225,9 +230,18 @@
    '((python . t)
      (emacs-lisp . t)
      (shell . t)
-     (C . t)))
+     (C . t)
+     (sql . t)))
 
   (setq org-confirm-babel-evaluate nil)
+
+  ;; PostgreSQL config para org-babel
+  (setq sql-postgres-program "/opt/homebrew/opt/postgresql@18/bin/psql")
+  (setq org-babel-default-header-args:sql
+        '((:engine . "postgresql")
+          (:dbhost . "localhost")
+          (:dbuser . "juaniraggio")
+          (:database . "org_practice")))
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 
   (setq org-babel-default-header-args:python
@@ -305,6 +319,8 @@
   :config
   (dired-async-mode 1))
 
+(add-hook 'dired-mode-hook (lambda () (display-line-numbers-mode 1)))
+
 ;; =============================================================================
 ;; AVY - NAVEGACION RAPIDA
 ;; =============================================================================
@@ -336,11 +352,16 @@
 ;; KOREAN LANGUAGE SUPPORT
 ;; =============================================================================
 
-;; Spell checking con Jinx (coreano + ingles)
+;; Spell checking con Jinx (coreano + ingles + espanol)
 (after! jinx
-  (setq jinx-languages "en_US ko_KR")
+  (setq jinx-languages "en_US ko_KR es_ES")
+  (setq ispell-personal-dictionary "~/Library/Spelling")
   (add-hook 'text-mode-hook #'jinx-mode)
   (add-hook 'org-mode-hook #'jinx-mode)
+
+  ;; Quitar subrayado de errores de ortografia
+  (custom-set-faces!
+   '(jinx-misspelled :underline nil))
 
   (map! :leader
         (:prefix ("s" . "spell")
@@ -378,3 +399,64 @@
         (:prefix ("d" . "dictionary")
          :desc "Search word at point" "d" #'osx-dictionary-search-word-at-point
          :desc "Search input"         "i" #'osx-dictionary-search-input)))
+
+;; =============================================================================
+;; MACOS - FIX COMMAND+W (pedir confirmacion antes de borrar)
+;; =============================================================================
+(when (featurep :system 'macos)
+  (defun my/safe-command-w ()
+    "Ejecutar COMMAND+w solo con confirmacion"
+    (interactive)
+    (when (y-or-n-p "Cerrar ventana/workspace? ")
+      (call-interactively (key-binding (kbd "C-x 0")))))
+
+  (global-set-key (kbd "s-w") #'my/safe-command-w))
+
+;; =============================================================================
+;; VTERM - TERMINAL EMULATOR
+;; =============================================================================
+(after! vterm
+  (setq vterm-shell "/bin/zsh"                    ; usar zsh con tu configuracion
+        vterm-max-scrollback 10000                ; historial de 10k lineas
+        vterm-buffer-name-string "vterm: %s"      ; nombre del buffer
+        vterm-kill-buffer-on-exit t)              ; cerrar buffer al salir
+
+  ;; Keybindings para vterm
+  (map! :leader
+        (:prefix ("o" . "open")
+         :desc "Open vterm in project" "t" #'+vterm/toggle        ; toggle en project root
+         :desc "Open vterm here"        "T" #'+vterm/here))        ; aqui (directorio actual)
+
+  ;; Tambien en el prefix de proyecto
+  (map! :leader
+        (:prefix ("p" . "project")
+         :desc "Open vterm in project" "t" #'+vterm/toggle)))
+
+;; =============================================================================
+;; AUTO-INSERT - TEMPLATES PARA ARCHIVOS NUEVOS
+;; =============================================================================
+(use-package autoinsert
+  :init
+  (setq auto-insert-query nil)
+  (auto-insert-mode 1)
+  :config
+  (define-auto-insert
+    '("\\.cpp\\'" . "C++ skeleton")
+    '(nil
+      "#include <iostream>" \n
+      "#include <vector>" \n
+      "#include <string>" \n
+      \n
+      "using namespace std;" \n
+      \n
+      "int main(int argc, char* argv[]) {" \n
+      > _ \n
+      > "return 0;" \n
+      "}" > \n))
+
+  (define-auto-insert
+    '("\\.h\\'" . "C++ header skeleton")
+    '(nil
+      "#pragma once" \n
+      \n
+      _ \n)))
