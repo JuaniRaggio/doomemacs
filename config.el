@@ -356,12 +356,17 @@
 (after! jinx
   (setq jinx-languages "en_US ko_KR es_ES")
   (setq ispell-personal-dictionary "~/Library/Spelling")
-  (add-hook 'text-mode-hook #'jinx-mode)
-  (add-hook 'org-mode-hook #'jinx-mode)
 
-  ;; Quitar subrayado de errores de ortografia
+  ;; OPCION 1: Desactivar completamente jinx-mode (comentar las siguientes lineas si quieres usarlo)
+  ;; (add-hook 'text-mode-hook #'jinx-mode)
+  ;; (add-hook 'org-mode-hook #'jinx-mode)
+
+  ;; OPCION 2: Quitar completamente el subrayado de errores de ortografia (multiple metodos)
   (custom-set-faces!
-   '(jinx-misspelled :underline nil))
+   '(jinx-misspelled :underline nil :foreground nil :background nil :weight normal))
+
+  ;; Alternativa adicional para asegurar que no hay subrayado
+  (setq jinx-misspelled-face 'default)
 
   (map! :leader
         (:prefix ("s" . "spell")
