@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: vector declaration
+# key: vec
+# --
+std::vector<${1:int}> ${2:name}$0;

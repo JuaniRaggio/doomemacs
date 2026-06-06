@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: SQL source block with session
+# key: srcsql
+# --
+#+BEGIN_SRC sql :session *SQL* :results output :exports both
+$1
+#+END_SRC
+$0

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Generic source block
+# key: begin
+# --
+#+begin_src ${1:language}
+$2
+#+end_src
+$0
