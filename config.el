@@ -72,7 +72,7 @@
 ;; =============================================================================
 (setq doom-font (font-spec :family "D2Coding" :size 18 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "D2Coding" :size 18))
-(setq doom-theme 'doom-tokyo-night)
+(setq doom-theme 'doom-plain)
 
 (setq display-line-numbers-type 'relative)
 
