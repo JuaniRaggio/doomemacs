@@ -72,12 +72,18 @@
 ;; =============================================================================
 (setq doom-font (font-spec :family "D2Coding" :size 18 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "D2Coding" :size 18))
-(setq doom-theme 'doom-zenburn)
+(setq doom-theme 'doom-ir-black)
 
 ;; Comentarios en italica (como code_style.comments = "italic" en nvim)
 (custom-set-faces!
  '(font-lock-comment-face :slant italic)
  '(font-lock-comment-delimiter-face :slant italic))
+
+;; Numeros de linea con mas contraste (el tema mayhem los deja casi invisibles).
+;; Numeros tenues pero legibles, linea actual resaltada con el acento del tema.
+(custom-set-faces!
+ '(line-number :foreground "#999999")
+ '(line-number-current-line :foreground "#eecc6c" :weight bold))
 
 (setq display-line-numbers-type 'relative)
 
@@ -408,21 +414,25 @@
 ;; KOREAN LANGUAGE SUPPORT
 ;; =============================================================================
 
-;; Spell checking con Jinx (coreano + ingles + espanol)
+;; Spell checking con Jinx: SOLO coreano.
+;; Las palabras en alfabeto latino (espanol/ingles) se ignoran y no se subrayan;
+;; solo se marcan los errores de ortografia en hangul (backend hunspell ko_KR).
 (after! jinx
-  (setq jinx-languages "en_US ko_KR es_ES")
+  (setq jinx-languages "ko_KR")
   (setq ispell-personal-dictionary "~/Library/Spelling")
 
-  ;; OPCION 1: Desactivar completamente jinx-mode (comentar las siguientes lineas si quieres usarlo)
-  ;; (add-hook 'text-mode-hook #'jinx-mode)
-  ;; (add-hook 'org-mode-hook #'jinx-mode)
+  ;; No chequear ninguna palabra que tenga letras latinas -> solo se evalua coreano
+  (push "[A-Za-z]" (alist-get t jinx-exclude-regexps))
 
-  ;; OPCION 2: Quitar completamente el subrayado de errores de ortografia (multiple metodos)
+  ;; Marcar los errores de coreano con subrayado ondulado
   (custom-set-faces!
-   '(jinx-misspelled :underline nil :foreground nil :background nil :weight normal))
+   '(jinx-misspelled :underline (:style wave :color "#cc6666")))
 
-  ;; Alternativa adicional para asegurar que no hay subrayado
-  (setq jinx-misspelled-face 'default)
+  ;; Activar Jinx donde se escribe coreano
+  (add-hook 'text-mode-hook #'jinx-mode)
+  (add-hook 'org-mode-hook #'jinx-mode)
+  (add-hook 'markdown-mode-hook #'jinx-mode)
+  (add-hook 'typst-mode-hook #'jinx-mode)
 
   (map! :leader
         (:prefix ("s" . "spell")

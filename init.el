@@ -26,7 +26,8 @@
        vc                ; version-control basico
 
        :checkers
-       (spell +jinx)     ; spell checking con jinx (coreano + ingles)
+       ;; Spell-check con jinx standalone (ver packages.el/config.el).
+       ;; El modulo spell de Doom (spell-fu/flyspell) queda desactivado a proposito.
 
        :tools
        lsp               ; language server protocol
