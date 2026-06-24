@@ -72,13 +72,13 @@
 ;; =============================================================================
 (setq doom-font (font-spec :family "D2Coding" :size 18 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "D2Coding" :size 18))
-(setq doom-theme 'modus-operandi-tinted)
+(setq doom-theme 'modus-vivendi-deuteranopia)
 
 (setq display-line-numbers-type 'relative)
 
-(setq-default tab-width 4)
+(setq-default tab-width 8)
 (setq-default line-spacing 4)
-(setq scroll-margin 8)
+(setq scroll-margin 1)
 (blink-cursor-mode 1)
 
 ;; Hangul fonts
@@ -94,10 +94,21 @@
 ;; Comentar con SPC #
 (map! :leader "#" #'comment-line)
 
+;; SPC e abre dired en el directorio actual (alineado con nvim)
+(map! :leader
+      :desc "Dired (current dir)" "e" #'dired-jump)
+
 ;; Formatear archivo con SPC f t
+;; SPC f f = buscar archivos recursivo en el proyecto (igual que SPC SPC)
 (map! :leader
       (:prefix ("f" . "file")
-       :desc "Format buffer" "t" #'+format/buffer))
+       :desc "Format buffer"        "t" #'+format/buffer
+       :desc "Find file in project" "f" #'projectile-find-file))
+
+;; Rename con LSP usando SPC r n (igual que <leader>rn en nvim)
+(map! :leader
+      (:prefix ("r" . "refactor")
+       :desc "LSP rename symbol" "n" #'lsp-rename))
 
 ;; =============================================================================
 ;; CORFU - COMPLETION
