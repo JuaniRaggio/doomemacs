@@ -72,7 +72,12 @@
 ;; =============================================================================
 (setq doom-font (font-spec :family "D2Coding" :size 18 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "D2Coding" :size 18))
-(setq doom-theme 'modus-vivendi-deuteranopia)
+(setq doom-theme 'doom-zenburn)
+
+;; Comentarios en italica (como code_style.comments = "italic" en nvim)
+(custom-set-faces!
+ '(font-lock-comment-face :slant italic)
+ '(font-lock-comment-delimiter-face :slant italic))
 
 (setq display-line-numbers-type 'relative)
 
@@ -154,7 +159,8 @@
         lsp-completion-show-kind t                 ; mostrar kind (function, variable, etc)
         lsp-completion-enable-additional-text-edit t ; permite auto-import al aceptar completion
         lsp-signature-auto-activate '(:on-trigger-char)  ; solo mostrar signature al tipear (
-        lsp-signature-render-documentation nil))   ; no renderizar docs en signature (mas rapido)
+        lsp-signature-render-documentation nil          ; no renderizar docs en signature (mas rapido)
+        lsp-diagnostics-provider :flymake))             ; no usamos flycheck (sin modulo syntax)
 
 ;; Diagnosticos inline (lsp-ui)
 (after! lsp-ui
@@ -162,8 +168,47 @@
         lsp-ui-sideline-show-code-actions t         ; code actions inline (quick fixes)
         lsp-ui-sideline-delay 0.3                  ; delay antes de mostrar (no saturar)
         lsp-ui-sideline-update-mode 'line          ; actualizar al cambiar de linea
-        lsp-ui-doc-enable nil                      ; desactivar doc popup (overhead de rendering)
+        lsp-ui-doc-enable nil                      ; desactivar doc popup automatico (overhead)
         lsp-ui-peek-enable t))
+
+;; =============================================================================
+;; LSP KEYBINDS (alineados con nvim)
+;; =============================================================================
+;; Navegacion de codigo y documentacion: gd/gD/gi/grr + K para hover
+(after! lsp-mode
+  (map! :map lsp-mode-map
+        :n "K"   #'lsp-ui-doc-glance        ; hover docs (como vim.lsp.buf.hover)
+        :n "gd"  #'lsp-find-definition       ; gd -> definicion
+        :n "gD"  #'lsp-find-declaration      ; gD -> declaracion
+        :n "gi"  #'lsp-find-implementation   ; gi -> implementacion
+        :n "grr" #'lsp-find-references))     ; grr -> referencias
+
+;; Code action con SPC c a (como <leader>ca en nvim)
+(map! :leader
+      :desc "LSP code action" "c a" #'lsp-execute-code-action)
+
+;; Diagnosticos: ]d/[d navegan, ]q/[q quickfix (como en nvim)
+(map! :n "]d" #'flymake-goto-next-error
+      :n "[d" #'flymake-goto-prev-error
+      :n "]q" #'next-error
+      :n "[q" #'previous-error)
+
+;; SPC ? muestra los errores del buffer (como <leader>? en nvim)
+(map! :leader
+      :desc "Buffer diagnostics" "?" #'flymake-show-buffer-diagnostics)
+
+;; Prefijo SPC x = diagnosticos (estilo Trouble en nvim)
+;; SPC x estaba ligado a un comando en Doom; hay que liberarlo antes de usarlo como prefijo
+(map! :leader "x" nil)
+(map! :leader
+      (:prefix ("x" . "diagnostics")
+       :desc "Project diagnostics" "x" #'flymake-show-project-diagnostics
+       :desc "Buffer diagnostics"  "d" #'flymake-show-buffer-diagnostics
+       :desc "List/jump (consult)" "q" #'consult-flymake))
+
+;; SPC / busca en el proyecto (live grep, como <leader>/ en nvim)
+(map! :leader
+      :desc "Search project" "/" #'+default/search-project)
 
 ;; =============================================================================
 ;; CLANGD - C/C++

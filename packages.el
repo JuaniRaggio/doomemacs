@@ -9,3 +9,7 @@
 (package! typst-mode)
 (package! google-translate)
 (package! osx-dictionary)
+
+;; Colorscheme black-metal mayhem (misma paleta base16 que en nvim)
+(package! base16-theme
+  :recipe (:host github :repo "tinted-theming/base16-emacs"))
