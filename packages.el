@@ -17,3 +17,7 @@
 ;; Spell-check con jinx (via enchant + hunspell ko_KR). Standalone porque
 ;; el modulo :checkers spell de Doom no integra jinx en esta version.
 (package! jinx)
+
+;; valign: alinea tablas org/markdown a nivel de pixel (clave con coreano,
+;; que es de doble ancho y rompe la alineacion normal por caracteres)
+(package! valign)

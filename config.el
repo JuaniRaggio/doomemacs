@@ -72,7 +72,7 @@
 ;; =============================================================================
 (setq doom-font (font-spec :family "D2Coding" :size 18 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "D2Coding" :size 18))
-(setq doom-theme 'doom-ir-black)
+(setq doom-theme 'base16-black-metal-immortal)
 
 ;; Comentarios en italica (como code_style.comments = "italic" en nvim)
 (custom-set-faces!
@@ -274,6 +274,13 @@
   :config
   (setq org-superstar-headline-bullets-list '("◉" "○" "▶" "▷" "◆" "◇"))
   (setq org-superstar-item-bullet-alist '((?+ . ?➤) (?- . ?•))))
+
+;; valign: alineacion pixel-perfect de tablas (org/markdown), correcta con coreano
+(use-package! valign
+  :hook ((org-mode . valign-mode)
+         (markdown-mode . valign-mode))
+  :config
+  (setq valign-fancy-bar t))   ; barras con caracteres de caja Unicode
 
 (after! org
   (setq org-hide-emphasis-markers t
