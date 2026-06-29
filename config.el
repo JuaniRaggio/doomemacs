@@ -72,7 +72,7 @@
 ;; =============================================================================
 (setq doom-font (font-spec :family "D2Coding" :size 18 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "D2Coding" :size 18))
-(setq doom-theme 'base16-black-metal-immortal)
+(setq doom-theme 'base16-black-metal-mayhem)
 
 ;; Comentarios en italica (como code_style.comments = "italic" en nvim)
 (custom-set-faces!
@@ -497,7 +497,18 @@
   (setq vterm-shell "/bin/zsh"                    ; usar zsh con tu configuracion
         vterm-max-scrollback 10000                ; historial de 10k lineas
         vterm-buffer-name-string "vterm: %s"      ; nombre del buffer
-        vterm-kill-buffer-on-exit t)              ; cerrar buffer al salir
+        vterm-kill-buffer-on-exit t               ; cerrar buffer al salir
+        vterm-timer-delay 0.01)                   ; refresco de output mas fluido
+
+  ;; Arrancar en estado insert: podes tipear de una, sin pasar a normal primero
+  (set-evil-initial-state! 'vterm-mode 'insert)
+
+  ;; En la terminal no queremos numeros de linea, hl-line ni el espaciado de texto
+  (add-hook 'vterm-mode-hook
+            (lambda ()
+              (display-line-numbers-mode -1)
+              (hl-line-mode -1)
+              (setq-local line-spacing 0)))
 
   ;; Keybindings para vterm
   (map! :leader
@@ -508,7 +519,11 @@
   ;; Tambien en el prefix de proyecto
   (map! :leader
         (:prefix ("p" . "project")
-         :desc "Open vterm in project" "t" #'+vterm/toggle)))
+         :desc "Open vterm in project" "t" #'+vterm/toggle))
+
+  ;; C-q manda la siguiente tecla literal a la shell (util para C-c, C-z, etc.)
+  (map! :map vterm-mode-map
+        :i "C-q" #'vterm-send-next-key))
 
 ;; =============================================================================
 ;; AUTO-INSERT - TEMPLATES PARA ARCHIVOS NUEVOS
