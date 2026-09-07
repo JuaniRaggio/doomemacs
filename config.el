@@ -70,9 +70,9 @@
 ;; =============================================================================
 ;; APARIENCIA
 ;; =============================================================================
-(setq doom-font (font-spec :family "D2Coding" :size 18 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "D2Coding" :size 18))
-(setq doom-theme 'base16-black-metal-mayhem)
+(setq doom-font (font-spec :family "Comic Mono" :size 18 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "Comic Mono" :size 18))
+(setq doom-theme 'doom-solarized-light)
 
 ;; Comentarios en italica (como code_style.comments = "italic" en nvim)
 (custom-set-faces!
@@ -363,6 +363,9 @@
 ;; =============================================================================
 ;; PDF-TOOLS
 ;; =============================================================================
+;; Force Apple clang so pdf-tools-install doesn't pick up a stale/missing gcc
+(setenv "CC" "/usr/bin/cc")
+
 (after! pdf-tools
   (setq-default pdf-view-display-size 'fit-width)
   (setq pdf-view-resize-factor 1.1
@@ -371,6 +374,33 @@
 
 (add-hook 'pdf-view-mode-hook
           (lambda () (display-line-numbers-mode -1)))
+
+;; =============================================================================
+;; PPTX VIEWER
+;; =============================================================================
+;; Requires: brew install --cask libreoffice
+(defconst my/soffice "/Applications/LibreOffice.app/Contents/MacOS/soffice")
+
+(defun my/open-pptx-as-pdf ()
+  "Convert the current PPTX file to PDF via LibreOffice and open it."
+  (when (and buffer-file-name
+             (string-match-p "\\.pptx\\'" buffer-file-name))
+    (if (not (file-executable-p my/soffice))
+        (message "pdf-tools: install LibreOffice to view PPTX files: brew install --cask libreoffice")
+      (let* ((src buffer-file-name)
+             (outdir (file-name-directory src))
+             (pdf (concat (file-name-sans-extension src) ".pdf")))
+        (kill-buffer)
+        (message "Converting %s..." (file-name-nondirectory src))
+        (set-process-sentinel
+         (start-process "soffice-convert" nil my/soffice
+                        "--headless" "--convert-to" "pdf" "--outdir" outdir src)
+         (lambda (proc _)
+           (if (= (process-exit-status proc) 0)
+               (find-file pdf)
+             (message "PPTX conversion failed"))))))))
+
+(add-hook 'find-file-hook #'my/open-pptx-as-pdf)
 
 ;; =============================================================================
 ;; ASM / x86
