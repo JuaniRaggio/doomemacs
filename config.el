@@ -300,7 +300,10 @@
      (emacs-lisp . t)
      (shell . t)
      (C . t)
-     (sql . t)))
+     (sql . t)
+     (d2 . t)))
+
+  (require 'ob-d2)
 
   (setq org-confirm-babel-evaluate nil)
 
@@ -374,6 +377,25 @@
 
 (add-hook 'pdf-view-mode-hook
           (lambda () (display-line-numbers-mode -1)))
+
+;; =============================================================================
+;; ORG-NOTER
+;; =============================================================================
+(use-package! org-noter
+  :after (org pdf-tools)
+  :config
+  (setq org-noter-notes-search-path '("~/Notes/roamnotes")
+        org-noter-auto-save-last-location t
+        org-noter-always-create-frame nil
+        org-noter-kill-frame-at-session-end nil)
+
+  (map! :map pdf-view-mode-map
+        :n "i" #'org-noter-insert-note
+        :n "I" #'org-noter-insert-precise-note)
+
+  (map! :leader
+        (:prefix ("n" . "notes")
+         :desc "Org-noter open" "o" #'org-noter)))
 
 ;; =============================================================================
 ;; PPTX VIEWER

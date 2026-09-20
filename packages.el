@@ -2,6 +2,7 @@
 ;;; $DOOMDIR/packages.el
 
 (package! org-superstar)
+(package! org-noter)
 (package! visual-fill-column)
 (package! exec-path-from-shell)
 (package! x86-lookup)
@@ -21,3 +22,5 @@
 ;; valign: alinea tablas org/markdown a nivel de pixel (clave con coreano,
 ;; que es de doble ancho y rompe la alineacion normal por caracteres)
 (package! valign)
+
+(package! d2-mode)
