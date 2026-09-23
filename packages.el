@@ -9,7 +9,8 @@
 (package! avy)
 (package! typst-mode)
 (package! google-translate)
-(package! osx-dictionary)
+(when IS-MAC
+  (package! osx-dictionary))
 
 ;; Colorscheme black-metal mayhem (misma paleta base16 que en nvim)
 (package! base16-theme
@@ -23,4 +24,3 @@
 ;; que es de doble ancho y rompe la alineacion normal por caracteres)
 (package! valign)
 
-(package! d2-mode)

@@ -72,7 +72,7 @@
 ;; =============================================================================
 (setq doom-font (font-spec :family "Comic Mono" :size 18 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "Comic Mono" :size 18))
-(setq doom-theme 'doom-solarized-light)
+(setq doom-theme 'doom-gruvbox)
 
 ;; Comentarios en italica (como code_style.comments = "italic" en nvim)
 (custom-set-faces!
@@ -301,14 +301,12 @@
      (shell . t)
      (C . t)
      (sql . t)
-     (d2 . t)))
-
-  (require 'ob-d2)
+))
 
   (setq org-confirm-babel-evaluate nil)
 
   ;; PostgreSQL config para org-babel
-  (setq sql-postgres-program "/opt/homebrew/opt/postgresql@18/bin/psql")
+  (setq sql-postgres-program (if IS-MAC "/opt/homebrew/opt/postgresql@18/bin/psql" "psql"))
   (setq org-babel-default-header-args:sql
         '((:engine . "postgresql")
           (:dbhost . "localhost")
@@ -328,9 +326,9 @@
           ("\\.pdf\\'" . emacs))))
 
 ;; Python para org-babel
-(setq python-shell-interpreter "/opt/homebrew/bin/python3")
+(setq python-shell-interpreter (if IS-MAC "/opt/homebrew/bin/python3" "python3"))
 (after! org
-  (setq org-babel-python-command "/opt/homebrew/bin/python3"))
+  (setq org-babel-python-command (if IS-MAC "/opt/homebrew/bin/python3" "python3")))
 
 ;; Visual fill column para escritura centrada
 (defun my/org-mode-visual-fill ()
@@ -401,7 +399,7 @@
 ;; PPTX VIEWER
 ;; =============================================================================
 ;; Requires: brew install --cask libreoffice
-(defconst my/soffice "/Applications/LibreOffice.app/Contents/MacOS/soffice")
+(defconst my/soffice (if IS-MAC "/Applications/LibreOffice.app/Contents/MacOS/soffice" "soffice"))
 
 (defun my/open-pptx-as-pdf ()
   "Convert the current PPTX file to PDF via LibreOffice and open it."
@@ -478,7 +476,7 @@
 ;; solo se marcan los errores de ortografia en hangul (backend hunspell ko_KR).
 (after! jinx
   (setq jinx-languages "ko_KR")
-  (setq ispell-personal-dictionary "~/Library/Spelling")
+  (setq ispell-personal-dictionary (if IS-MAC "~/Library/Spelling" "~/.local/share/spelling"))
 
   ;; No chequear ninguna palabra que tenga letras latinas -> solo se evalua coreano
   (push "[A-Za-z]" (alist-get t jinx-exclude-regexps))
@@ -520,15 +518,16 @@
          :desc "Translate query"      "q" #'google-translate-query-translate)))
 
 ;; Diccionario macOS como fallback
-(use-package! osx-dictionary
-  :defer t
-  :commands (osx-dictionary-search-word-at-point
-             osx-dictionary-search-input)
-  :init
-  (map! :leader
-        (:prefix ("d" . "dictionary")
-         :desc "Search word at point" "d" #'osx-dictionary-search-word-at-point
-         :desc "Search input"         "i" #'osx-dictionary-search-input)))
+(when IS-MAC
+  (use-package! osx-dictionary
+    :defer t
+    :commands (osx-dictionary-search-word-at-point
+               osx-dictionary-search-input)
+    :init
+    (map! :leader
+          (:prefix ("d" . "dictionary")
+           :desc "Search word at point" "d" #'osx-dictionary-search-word-at-point
+           :desc "Search input"         "i" #'osx-dictionary-search-input))))
 
 ;; =============================================================================
 ;; MACOS - FIX COMMAND+W (pedir confirmacion antes de borrar)
