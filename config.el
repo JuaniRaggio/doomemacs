@@ -98,6 +98,8 @@
 
 ;; Maximizar frame
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
+(when IS-MAC
+  (add-to-list 'default-frame-alist '(undecorated-round . t)))
 
 ;; Guardar posicion en archivo
 (save-place-mode 1)
@@ -144,6 +146,11 @@
   (define-key corfu-map (kbd "RET") nil)
   (define-key corfu-map [return] nil))
 
+;; Corfu popupinfo (documentacion al lado del popup)
+(after! corfu
+  (corfu-popupinfo-mode 1)
+  (setq corfu-popupinfo-delay '(0.5 . 0.2)))
+
 ;; Cape - fuentes adicionales de completion (al final para no pisar LSP)
 (after! cape
   (add-to-list 'completion-at-point-functions #'cape-file t)
@@ -174,7 +181,9 @@
         lsp-ui-sideline-show-code-actions t         ; code actions inline (quick fixes)
         lsp-ui-sideline-delay 0.3                  ; delay antes de mostrar (no saturar)
         lsp-ui-sideline-update-mode 'line          ; actualizar al cambiar de linea
-        lsp-ui-doc-enable nil                      ; desactivar doc popup automatico (overhead)
+        lsp-ui-doc-enable t
+        lsp-ui-doc-delay 0.5
+        lsp-ui-doc-position 'at-point
         lsp-ui-peek-enable t))
 
 ;; =============================================================================
