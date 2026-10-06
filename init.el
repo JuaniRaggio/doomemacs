@@ -9,7 +9,7 @@
 
        :ui
        doom              ; theming base
-       doom-dashboard    ; splash screen
+       dashboard         ; splash screen
        hl-todo           ; highlight TODO/FIXME en org
        modeline          ; barra de estado
        workspaces        ; tab emulation y persistence
@@ -35,7 +35,6 @@
        pdf               ; pdf-tools (para x86 manual y org)
 
        :term
-       vterm             ; emulador de terminal (mejor que eshell/term)
 
        :os
        (:if (featurep :system 'macos) macos)
@@ -43,7 +42,7 @@
        :lang
        (cc +lsp)         ; C/C++ con clangd
        emacs-lisp        ; necesario para config de doom
-       (org +roam2)      ; org-mode con org-roam v2
+       (org +roam)       ; org-mode con org-roam v2
        (python +lsp)     ; python con pyright/pylsp
        sh                ; shell scripts
 

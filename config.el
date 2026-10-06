@@ -70,8 +70,8 @@
 ;; =============================================================================
 ;; APARIENCIA
 ;; =============================================================================
-(setq doom-font (font-spec :family "Comic Mono" :size 18 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "Comic Mono" :size 18))
+(setq doom-font (font-spec :family "D2Coding" :size 18 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "D2Coding" :size 18))
 (setq doom-theme 'doom-gruvbox)
 
 ;; Comentarios en italica (como code_style.comments = "italic" en nvim)
@@ -98,8 +98,13 @@
 
 ;; Maximizar frame
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
+(add-to-list 'default-frame-alist '(internal-border-width . 8))
 (when IS-MAC
   (add-to-list 'default-frame-alist '(undecorated-round . t)))
+
+(add-hook 'doom-load-theme-hook
+          (lambda ()
+            (set-face-background 'internal-border (face-background 'default))))
 
 ;; Guardar posicion en archivo
 (save-place-mode 1)
@@ -443,8 +448,7 @@
 ;; =============================================================================
 ;; DIRED
 ;; =============================================================================
-(use-package! async
-  :config
+(after! dired
   (dired-async-mode 1))
 
 (add-hook 'dired-mode-hook (lambda () (display-line-numbers-mode 1)))
@@ -551,39 +555,30 @@
   (global-set-key (kbd "s-w") #'my/safe-command-w))
 
 ;; =============================================================================
-;; VTERM - TERMINAL EMULATOR
+;; EAT - TERMINAL EMULATOR
 ;; =============================================================================
-(after! vterm
-  (setq vterm-shell "/bin/zsh"                    ; usar zsh con tu configuracion
-        vterm-max-scrollback 10000                ; historial de 10k lineas
-        vterm-buffer-name-string "vterm: %s"      ; nombre del buffer
-        vterm-kill-buffer-on-exit t               ; cerrar buffer al salir
-        vterm-timer-delay 0.01)                   ; refresco de output mas fluido
+(after! eat
+  (setq eat-kill-buffer-on-exit t)
 
-  ;; Arrancar en estado insert: podes tipear de una, sin pasar a normal primero
-  (set-evil-initial-state! 'vterm-mode 'insert)
+  (evil-set-initial-state 'eat-mode 'insert)
 
-  ;; En la terminal no queremos numeros de linea, hl-line ni el espaciado de texto
-  (add-hook 'vterm-mode-hook
+  (add-hook 'eat-mode-hook
             (lambda ()
               (display-line-numbers-mode -1)
               (hl-line-mode -1)
               (setq-local line-spacing 0)))
 
-  ;; Keybindings para vterm
   (map! :leader
         (:prefix ("o" . "open")
-         :desc "Open vterm in project" "t" #'+vterm/toggle        ; toggle en project root
-         :desc "Open vterm here"        "T" #'+vterm/here))        ; aqui (directorio actual)
+         :desc "Open eat in project" "t" #'eat-project
+         :desc "Open eat here"       "T" #'eat))
 
-  ;; Tambien en el prefix de proyecto
   (map! :leader
         (:prefix ("p" . "project")
-         :desc "Open vterm in project" "t" #'+vterm/toggle))
+         :desc "Open eat in project" "t" #'eat-project))
 
-  ;; C-q manda la siguiente tecla literal a la shell (util para C-c, C-z, etc.)
-  (map! :map vterm-mode-map
-        :i "C-q" #'vterm-send-next-key))
+  (map! :map eat-semi-char-mode-map
+        :i "C-q" #'eat-self-input))
 
 ;; =============================================================================
 ;; AUTO-INSERT - TEMPLATES PARA ARCHIVOS NUEVOS
