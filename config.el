@@ -70,9 +70,9 @@
 ;; =============================================================================
 ;; APARIENCIA
 ;; =============================================================================
-(setq doom-font (font-spec :family "D2Coding" :size 18 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "D2Coding" :size 18))
-(setq doom-theme 'doom-gruvbox)
+(setq doom-font (font-spec :family "Iosevka" :size 18 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "Iosevka" :size 18))
+(setq doom-theme 'doom-moonlight)
 
 ;; Comentarios en italica (como code_style.comments = "italic" en nvim)
 (custom-set-faces!
@@ -369,11 +369,53 @@
        :desc "Toggle roam buffer"  "l" #'org-roam-buffer-toggle
        :desc "Find node"           "f" #'org-roam-node-find
        :desc "Insert node"         "i" #'org-roam-node-insert
-       :desc "Roam graph"          "g" #'org-roam-graph
        :desc "Capture"             "c" #'org-roam-capture
        :desc "Add tag"             "t" #'org-roam-tag-add
        :desc "Add alias"           "a" #'org-roam-alias-add
-       :desc "Dailies today"       "d" #'org-roam-dailies-goto-today))
+       :desc "Dailies today"       "d" #'org-roam-dailies-goto-today
+       :desc "Paste screenshot"    "p" #'org-download-clipboard
+       :desc "Roam UI (graph)"     "u" #'org-roam-ui-open))
+
+;; =============================================================================
+;; ORG-ROAM-UI (grafo interactivo en el browser)
+;; =============================================================================
+;; SPC n u abre el grafo en el browser (levanta un server local y lo sincroniza
+;; en vivo con tu buffer actual).
+(use-package! org-roam-ui
+  :after org-roam
+  :config
+  (setq org-roam-ui-sync-theme t       ; usa los colores de tu tema de Emacs
+        org-roam-ui-follow t           ; resalta/centra el nodo en el que estas
+        org-roam-ui-update-on-save t   ; refresca al guardar la nota
+        org-roam-ui-open-on-start t))
+
+;; =============================================================================
+;; ORG-DOWNLOAD (pegar screenshots del portapapeles)
+;; =============================================================================
+;; Flujo: CMD+SHIFT+4 (el screenshot queda en el portapapeles) -> volver a
+;; Emacs en un buffer org -> SPC n p. Guarda el PNG en disco e inserta el link.
+(use-package! org-download
+  :after org
+  :config
+  (setq org-download-method 'directory
+        ;; No crear subcarpetas por nivel de heading
+        org-download-heading-lvl nil
+        ;; Ancho de display inline (solo afecta la vista, no el archivo)
+        org-download-image-org-width 600
+        ;; Timestamp en el nombre para evitar colisiones
+        org-download-timestamp "%Y%m%d-%H%M%S-"
+        ;; Carpeta base; el hook de abajo la vuelve por-nota
+        org-download-image-dir "~/Notes/roamnotes/images")
+
+  ;; Guardar en images/<nombre-de-la-nota>/ para mantener todo ordenado
+  ;; dentro del directorio de org-roam.
+  (defun +org-download-set-dir-per-note ()
+    (when (buffer-file-name)
+      (setq-local org-download-image-dir
+                  (expand-file-name
+                   (file-name-base (buffer-file-name))
+                   "~/Notes/roamnotes/images"))))
+  (add-hook 'org-mode-hook #'+org-download-set-dir-per-note))
 
 ;; =============================================================================
 ;; PDF-TOOLS
@@ -555,14 +597,18 @@
   (global-set-key (kbd "s-w") #'my/safe-command-w))
 
 ;; =============================================================================
-;; EAT - TERMINAL EMULATOR
+;; VTERM - TERMINAL EMULATOR
 ;; =============================================================================
-(after! eat
-  (setq eat-kill-buffer-on-exit t)
+(after! vterm
+  (setq vterm-shell "/bin/zsh"
+        vterm-max-scrollback 10000
+        vterm-buffer-name-string "vterm: %s"
+        vterm-kill-buffer-on-exit t
+        vterm-timer-delay 0.01)
 
-  (evil-set-initial-state 'eat-mode 'insert)
+  (evil-set-initial-state 'vterm-mode 'insert)
 
-  (add-hook 'eat-mode-hook
+  (add-hook 'vterm-mode-hook
             (lambda ()
               (display-line-numbers-mode -1)
               (hl-line-mode -1)
@@ -570,15 +616,15 @@
 
   (map! :leader
         (:prefix ("o" . "open")
-         :desc "Open eat in project" "t" #'eat-project
-         :desc "Open eat here"       "T" #'eat))
+         :desc "Open vterm in project" "t" #'+vterm/toggle
+         :desc "Open vterm here"       "T" #'+vterm/here))
 
   (map! :leader
         (:prefix ("p" . "project")
-         :desc "Open eat in project" "t" #'eat-project))
+         :desc "Open vterm in project" "t" #'+vterm/toggle))
 
-  (map! :map eat-semi-char-mode-map
-        :i "C-q" #'eat-self-input))
+  (map! :map vterm-mode-map
+        :i "C-q" #'vterm-send-next-key))
 
 ;; =============================================================================
 ;; AUTO-INSERT - TEMPLATES PARA ARCHIVOS NUEVOS

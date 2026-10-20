@@ -35,6 +35,7 @@
        pdf               ; pdf-tools (para x86 manual y org)
 
        :term
+       vterm
 
        :os
        (:if (featurep :system 'macos) macos)
@@ -42,6 +43,7 @@
        :lang
        (cc +lsp)         ; C/C++ con clangd
        emacs-lisp        ; necesario para config de doom
+       (ocaml +lsp)      ; OCaml con tuareg + ocaml-lsp-server
        (org +roam)       ; org-mode con org-roam v2
        (python +lsp)     ; python con pyright/pylsp
        sh                ; shell scripts

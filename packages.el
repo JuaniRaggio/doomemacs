@@ -25,6 +25,15 @@
 ;; que es de doble ancho y rompe la alineacion normal por caracteres)
 (package! valign)
 
-(package! eat)
 (package! d2-mode)
+
+;; org-download: pegar screenshots del portapapeles directo al org.
+;; En macOS usa pngpaste (brew install pngpaste) automaticamente.
+(package! org-download)
+
+;; org-roam-ui: grafo interactivo (D3) en el browser. Reemplaza al
+;; org-roam-graph nativo (graphviz) que queda estirado y no renderiza bien.
+;; El :files con "out" es necesario para incluir los assets web compilados.
+(package! org-roam-ui
+  :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
 
