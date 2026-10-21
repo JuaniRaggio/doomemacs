@@ -72,7 +72,7 @@
 ;; =============================================================================
 (setq doom-font (font-spec :family "Iosevka" :size 18 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "Iosevka" :size 18))
-(setq doom-theme 'doom-moonlight)
+(setq doom-theme 'gruber-darker)
 
 ;; Comentarios en italica (como code_style.comments = "italic" en nvim)
 (custom-set-faces!
