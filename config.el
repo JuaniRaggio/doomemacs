@@ -88,12 +88,9 @@
   (let ((default-directory (or (doom-project-root) default-directory)))
     (apply orig-fn args)))
 
-;; =============================================================================
-;; APARIENCIA
-;; =============================================================================
 (setq doom-font (font-spec :family "Iosevka" :size 18 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "Iosevka" :size 18))
-(setq doom-theme 'gruber-darker)
+(setq doom-theme 'doom-gruvbox)
 
 ;; Comentarios en italica (como code_style.comments = "italic" en nvim)
 (custom-set-faces!
@@ -511,7 +508,10 @@
 ;; =============================================================================
 (use-package! x86-lookup
   :config
-  (setq x86-lookup-pdf "~/workspace/itbaworkspace/arquitectura/Assemblerx86_64/docs/325462-088-sdm-vol-1-2abcd-3abcd-4.pdf"))
+  ;; Intel SDM combinado (doc 325462). Ruta estable, no atada a un proyecto,
+  ;; asi no se rompe si movetes/borras carpetas. Descargar desde:
+  ;; https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html
+  (setq x86-lookup-pdf "~/Documents/intel-sdm.pdf"))
 
 (global-set-key (kbd "C-c x") 'x86-lookup)
 
