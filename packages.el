@@ -13,9 +13,18 @@
 (when IS-MAC
   (package! osx-dictionary))
 
-;; Colorscheme black-metal mayhem (misma paleta base16 que en nvim)
-(package! base16-theme
-  :recipe (:host github :repo "tinted-theming/base16-emacs"))
+;; Tema gruber-darker (doom-theme en config.el). Hay que declararlo aca para
+;; que Doom lo instale en su load-path; instalarlo con M-x package-install NO
+;; alcanza (queda solo en custom.el y Doom no lo encuentra al arrancar).
+(package! gruber-darker-theme)
+
+;; Migrados desde custom.el (estaban instalados con M-x package-install, que en
+;; Doom no alcanza). ros/ros-face: soporte ROS para robotics. agent-shell:
+;; shell para agentes de IA. cpputils-cmake: integracion CMake para C++.
+(package! ros)
+(package! ros-face)
+(package! agent-shell)
+(package! cpputils-cmake)
 
 ;; Spell-check con jinx (via enchant + hunspell ko_KR). Standalone porque
 ;; el modulo :checkers spell de Doom no integra jinx en esta version.

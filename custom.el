@@ -12,7 +12,6 @@
      "93011fe35859772a6766df8a4be817add8bfe105246173206478a0706f88b33d"
      "4d5d11bfef87416d85673947e3ca3d3d5d985ad57b02a7bb2e32beaf785a100e"
      "4594d6b9753691142f02e67b8eb0fda7d12f6cc9f1299a49b819312d6addad1d" default))
- '(package-selected-packages '(gruber-darker-theme org-roam x86-lookup))
  '(warning-suppress-types '((emacs) (defvaralias) (lexical-binding))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

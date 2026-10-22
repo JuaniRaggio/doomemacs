@@ -58,14 +58,35 @@
 (global-so-long-mode 1)
 
 ;; =============================================================================
-;; PATH DESDE SHELL (simplificado - solo PATH, no todas las variables)
+;; PATH DESDE SHELL
 ;; =============================================================================
+;; Emacs.app lanzado desde el Dock/Finder NO hereda el PATH del shell. Y como
+;; conda, opam, pixi, rbenv, etc. configuran el PATH en .zshrc (shell
+;; INTERACTIVO), hay que correr el shell con "-i" ademas de "-l": con solo "-l"
+;; (login no-interactivo) zsh lee .zshenv/.zprofile/.zlogin pero NO .zshrc, asi
+;; que nunca corre el bloque de conda y "conda" no aparece.
 (use-package! exec-path-from-shell
   :config
   (when (memq window-system '(mac ns x))
-    (setq exec-path-from-shell-arguments '("-l")
-          exec-path-from-shell-variables '("PATH"))
+    (setq exec-path-from-shell-arguments '("-l" "-i")
+          exec-path-from-shell-variables
+          '("PATH" "MANPATH"
+            ;; opam/OCaml: para que ocamllsp y el build encuentren todo
+            "OPAM_SWITCH_PREFIX" "CAML_LD_LIBRARY_PATH" "OCAML_TOPLEVEL_PATH"))
     (exec-path-from-shell-initialize)))
+
+;; =============================================================================
+;; COMPILE DESDE LA RAIZ DEL PROYECTO
+;; =============================================================================
+;; Por defecto `compile' (SPC c c) corre en el default-directory del buffer
+;; actual (ej: src/foo/), pero make/cargo/dune/cmake buscan su archivo de build
+;; en la RAIZ del proyecto. Con esto, compile arranca desde la raiz si estamos
+;; en un proyecto; si no, cae al directorio del buffer como siempre.
+(defadvice! +compile-from-project-root-a (orig-fn &rest args)
+  "Correr `compile' desde la raiz del proyecto cuando exista."
+  :around #'compile
+  (let ((default-directory (or (doom-project-root) default-directory)))
+    (apply orig-fn args)))
 
 ;; =============================================================================
 ;; APARIENCIA
@@ -233,6 +254,13 @@
 ;; =============================================================================
 ;; CLANGD - C/C++
 ;; =============================================================================
+;; IMPORTANTE: por defecto lsp-mode auto-baja un clangd viejo (15.0.6) y lo usa
+;; aunque tengas uno moderno. Ese clangd 15 se ahoga con la libc++ del SDK
+;; nuevo de macOS -> errores fantasma tipo "std::string no esta en std",
+;; <optional>, <rclcpp>. Forzamos el clangd moderno de Homebrew LLVM (igual que
+;; nvim via mason), que compila igual que el compilador real.
+(setq lsp-clients-clangd-executable "/opt/homebrew/opt/llvm/bin/clangd")
+
 (after! lsp-clangd
   (setq lsp-clients-clangd-args
         '("--background-index"               ; indexar en background para completions rapidas
