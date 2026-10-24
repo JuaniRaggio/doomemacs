@@ -1,7 +1,28 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
+;; =============================================================================
+;; ORG BLEEDING-EDGE (para el nuevo org-latex-preview: preview en vivo + SVG)
+;; =============================================================================
+;; OJO: esto desvincula org de la version estable de Doom. Puede romper
+;; org-roam/org-noter/org-superstar/valign. Para revertir: borrar estas lineas,
+;; borrar ~/.emacs.d/.local/straight/{build,repos}/org*, y correr `doom sync -u`.
+;; DEBE ir ANTES de cualquier otro paquete de org.
+(package! org
+  :recipe (:host nil
+           :repo "https://git.savannah.gnu.org/git/emacs/org-mode.git"
+           :branch "main"
+           :local-repo "org"
+           :files ("lisp/*.el" "lisp/org-version.el" "lisp/org-loaddefs.el" "etc")
+           :build t))
+;; No fijar org a la version que trae Doom.
+(unpin! org)
+
 (package! org-superstar)
+;; cdlatex: input/completado rapido de LaTeX en org (backtick para simbolos,
+;; TAB para expandir comandos \frac{}{} y entornos). Se activa con
+;; turn-on-org-cdlatex en el hook de org (ver config.el).
+(package! cdlatex)
 (package! org-noter)
 (package! visual-fill-column)
 (package! exec-path-from-shell
