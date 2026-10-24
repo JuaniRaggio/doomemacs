@@ -330,6 +330,21 @@
   (setq org-format-latex-options
         (plist-put org-format-latex-options :scale 2.0))
 
+  ;; Nuevo org-latex-preview (requiere org bleeding-edge, ver packages.el):
+  ;; preview en vivo + SVG + cache. GUARDADO con fboundp/boundp para que, si la
+  ;; org cargada NO lo tiene, no tire error y rompa el resto de config.el.
+  (when (boundp 'org-latex-preview-live)
+    (setq org-latex-preview-live t
+          org-latex-preview-numbered t))
+  (when (fboundp 'org-latex-preview-auto-mode)
+    (add-hook 'org-mode-hook #'org-latex-preview-auto-mode))
+
+  ;; cdlatex: input/completado de LaTeX en org. Dentro de fragmentos math:
+  ;;   ` (backtick) -> menu de simbolos (`a -> \alpha, `b -> \beta, ...)
+  ;;   TAB sobre un comando -> expande (fr<TAB> -> \frac{}{}, sum<TAB>, etc.)
+  ;;   _ y ^ -> auto-braces para sub/superindices
+  (add-hook 'org-mode-hook #'turn-on-org-cdlatex)
+
   (setq org-agenda-files '("~/Notes/roamnotes"))
 
   ;; Org-babel
@@ -386,7 +401,23 @@
         org-roam-completion-everywhere t
         ;; Evitar GC durante operaciones de DB (previene micro-freezes)
         org-roam-db-gc-threshold most-positive-fixnum)
-  (org-roam-db-autosync-mode))
+  (org-roam-db-autosync-mode)
+
+  ;; BLINDAJE: el hook de autosync (org-roam-db-autosync--try-update-on-save-h)
+  ;; llama a org-roam-db-update-file SIN condition-case. Si el update falla al
+  ;; guardar un nodo recien capturado, el error se propaga al after-save-hook y
+  ;; corta org-capture-finalize -> quedas varado sin leader (= "se desactivan
+  ;; los bindings"), y emacsql hace rollback -> el nodo no se indexa (= "hay que
+  ;; reiniciar"). Atrapamos el error: el capture termina limpio y el fallo real
+  ;; queda visible en *Messages* para diagnosticarlo.
+  (defadvice! +org-roam-db-update-file-safe-a (orig-fn &rest args)
+    "Evita que un error del update del DB rompa el finalize de la captura."
+    :around #'org-roam-db-update-file
+    (condition-case err
+        (apply orig-fn args)
+      (error
+       (message "[org-roam] fallo el update del DB (nodo NO indexado): %S" err)
+       nil))))
 
 ;; Keybindings para org-roam
 (map! :leader

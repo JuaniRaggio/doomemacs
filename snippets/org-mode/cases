@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: LaTeX cases
+# key: cases
+# --
+\begin{cases}
+$1 & \text{if } $2 \\\\
+$3 & \text{en otro caso}
+\end{cases}
+$0
