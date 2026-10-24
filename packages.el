@@ -22,6 +22,9 @@
 ;; cdlatex: input/completado rapido de LaTeX en org (backtick para simbolos,
 ;; TAB para expandir comandos \frac{}{} y entornos). Se activa con
 ;; turn-on-org-cdlatex en el hook de org (ver config.el).
+;; AUCTeX es dependencia real de cdlatex (necesita texmathp); sin el,
+;; turn-on-org-cdlatex falla y rompe el org-mode-hook.
+(package! auctex)
 (package! cdlatex)
 (package! org-noter)
 (package! visual-fill-column)

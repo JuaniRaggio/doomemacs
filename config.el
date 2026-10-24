@@ -343,7 +343,12 @@
   ;;   ` (backtick) -> menu de simbolos (`a -> \alpha, `b -> \beta, ...)
   ;;   TAB sobre un comando -> expande (fr<TAB> -> \frac{}{}, sum<TAB>, etc.)
   ;;   _ y ^ -> auto-braces para sub/superindices
-  (add-hook 'org-mode-hook #'turn-on-org-cdlatex)
+  ;; cdlatex necesita texmathp (viene con AUCTeX). Lo activamos SOLO si esta
+  ;; disponible: asi un fallo de cdlatex NUNCA aborta el org-mode-hook (si
+  ;; abortaba, se caian evil-org/valign/superstar -> links, imagenes y bullets
+  ;; dejaban de funcionar).
+  (add-hook 'org-mode-hook
+            (lambda () (when (require 'texmathp nil t) (turn-on-org-cdlatex))))
 
   (setq org-agenda-files '("~/Notes/roamnotes"))
 
@@ -430,6 +435,7 @@
        :desc "Add alias"           "a" #'org-roam-alias-add
        :desc "Dailies today"       "d" #'org-roam-dailies-goto-today
        :desc "Paste screenshot"    "p" #'org-download-clipboard
+       :desc "Org-noter open"      "o" #'org-noter
        :desc "Roam UI (graph)"     "u" #'org-roam-ui-open))
 
 ;; =============================================================================
@@ -501,11 +507,7 @@
 
   (map! :map pdf-view-mode-map
         :n "i" #'org-noter-insert-note
-        :n "I" #'org-noter-insert-precise-note)
-
-  (map! :leader
-        (:prefix ("n" . "notes")
-         :desc "Org-noter open" "o" #'org-noter)))
+        :n "I" #'org-noter-insert-precise-note))
 
 ;; =============================================================================
 ;; PPTX VIEWER
@@ -644,16 +646,37 @@
            :desc "Search input"         "i" #'osx-dictionary-search-input))))
 
 ;; =============================================================================
-;; MACOS - FIX COMMAND+W (pedir confirmacion antes de borrar)
+;; TABS (tab-bar nativo) en CMD ; WORKSPACES al leader (SPC TAB)
 ;; =============================================================================
-(when (featurep :system 'macos)
-  (defun my/safe-command-w ()
-    "Ejecutar COMMAND+w solo con confirmacion"
-    (interactive)
-    (when (y-or-n-p "Cerrar ventana/workspace? ")
-      (call-interactively (key-binding (kbd "C-x 0")))))
+;; Invertimos la ergonomia: las teclas faciles de CMD manejan TABS (lo que uso
+;; seguido), y los workspaces (persp, poco frecuentes) quedan en el leader.
+;;   CMD+t     -> nueva tab          CMD+1..9 -> ir a la tab N
+;;   CMD+w     -> cerrar tab         (recuperable: M-x tab-bar-undo-close-tab)
+;; Workspaces (poco frecuente) = "comando mas complicado", defaults de Doom:
+;;   SPC TAB n (nuevo), SPC TAB 1..9 (cambiar), SPC TAB d (borrar).
+(tab-bar-mode 1)
+(setq tab-bar-show 1                      ; mostrar la barra solo si hay >1 tab
+      tab-bar-new-tab-choice "*scratch*"  ; tab nueva arranca limpia
+      tab-bar-close-button-show nil
+      tab-bar-new-button-show nil)
 
-  (global-set-key (kbd "s-w") #'my/safe-command-w))
+(defun my/tab-select-n (n)
+  "Ir a la tab N si existe; si no, no hace nada (evita el error 'No tab')."
+  (when (<= n (length (tab-bar-tabs)))
+    (tab-bar-select-tab n)))
+
+(when (featurep :system 'macos)
+  (map! :g "s-t" #'tab-bar-new-tab
+        :g "s-w" #'tab-bar-close-tab
+        :g "s-1" (cmd! (my/tab-select-n 1))
+        :g "s-2" (cmd! (my/tab-select-n 2))
+        :g "s-3" (cmd! (my/tab-select-n 3))
+        :g "s-4" (cmd! (my/tab-select-n 4))
+        :g "s-5" (cmd! (my/tab-select-n 5))
+        :g "s-6" (cmd! (my/tab-select-n 6))
+        :g "s-7" (cmd! (my/tab-select-n 7))
+        :g "s-8" (cmd! (my/tab-select-n 8))
+        :g "s-9" (cmd! (my/tab-select-n 9))))
 
 ;; =============================================================================
 ;; VTERM - TERMINAL EMULATOR
