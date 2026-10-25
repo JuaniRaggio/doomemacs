@@ -1,24 +1,21 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
-;; Configuracion minima: org-roam + x86 asm
-;; Correr 'doom sync' despues de modificar
-
 (doom! :completion
-       (corfu +orderless)  ; completion (sin +icons para menos overhead)
-       vertico             ; minibuffer completion (necesario para org-roam)
+       (corfu +orderless)  ; completion
+       vertico             ; minibuffer completion
 
        :ui
-       doom              ; theming base
-       dashboard         ; splash screen
-       hl-todo           ; highlight TODO/FIXME en org
-       modeline          ; barra de estado
-       workspaces        ; tab emulation y persistence
+       doom
+       ;; dashboard
+       hl-todo
+       modeline
+       workspaces
 
        :editor
-       (evil +everywhere); vim keybindings
-       fold              ; folding en org
-       multiple-cursors  ; editing en multiples lugares
-       snippets          ; yasnippet
+       (evil +everywhere)
+       fold
+       multiple-cursors
+       snippets
 
        :emacs
        dired             ; file manager
@@ -44,9 +41,9 @@
        (cc +lsp)         ; C/C++ con clangd
        emacs-lisp        ; necesario para config de doom
        (ocaml +lsp)      ; OCaml con tuareg + ocaml-lsp-server
-       (org +roam)       ; org-mode con org-roam v2
-       (python +lsp)     ; python con pyright/pylsp
-       sh                ; shell scripts
-
+       (org +roam)
+       (python +lsp)
+       sh
+       
        :config
        (default +bindings +smartparens))
