@@ -330,6 +330,12 @@
   (setq org-format-latex-options
         (plist-put org-format-latex-options :scale 2.0))
 
+  ;; dvisvgm (el que convierte el DVI a SVG para el preview) usa la LIBRERIA de
+  ;; Ghostscript (libgs.dylib), no el binario gs. El dvisvgm de MacTeX no
+  ;; encuentra la libgs de Homebrew -> "Ghostscript not found" -> SVG vacio/mal.
+  ;; La variable LIBGS le dice donde esta. Sin esto, el preview renderiza roto.
+  (setenv "LIBGS" "/opt/homebrew/opt/ghostscript/lib/libgs.dylib")
+
   ;; Nuevo org-latex-preview (requiere org bleeding-edge, ver packages.el):
   ;; preview en vivo + SVG + cache. GUARDADO con fboundp/boundp para que, si la
   ;; org cargada NO lo tiene, no tire error y rompa el resto de config.el.
@@ -666,17 +672,22 @@
     (tab-bar-select-tab n)))
 
 (when (featurep :system 'macos)
-  (map! :g "s-t" #'tab-bar-new-tab
-        :g "s-w" #'tab-bar-close-tab
-        :g "s-1" (cmd! (my/tab-select-n 1))
-        :g "s-2" (cmd! (my/tab-select-n 2))
-        :g "s-3" (cmd! (my/tab-select-n 3))
-        :g "s-4" (cmd! (my/tab-select-n 4))
-        :g "s-5" (cmd! (my/tab-select-n 5))
-        :g "s-6" (cmd! (my/tab-select-n 6))
-        :g "s-7" (cmd! (my/tab-select-n 7))
-        :g "s-8" (cmd! (my/tab-select-n 8))
-        :g "s-9" (cmd! (my/tab-select-n 9))))
+  ;; OJO: el modulo de workspaces (doom+) bindea s-1..9 en evil-normal-state-map,
+  ;; que gana sobre global-map. Por eso hay que bindear las tabs en los ESTADOS
+  ;; de evil (:nvime = normal/visual/insert/motion/emacs), no en :g, para que
+  ;; CMD+numero vaya a TABS y no al workspace. (Los workspaces siguen en SPC TAB
+  ;; y en M-numero, que no tocamos.)
+  (map! :nvime "s-t" #'tab-bar-new-tab
+        :nvime "s-w" #'tab-bar-close-tab
+        :nvime "s-1" (cmd! (my/tab-select-n 1))
+        :nvime "s-2" (cmd! (my/tab-select-n 2))
+        :nvime "s-3" (cmd! (my/tab-select-n 3))
+        :nvime "s-4" (cmd! (my/tab-select-n 4))
+        :nvime "s-5" (cmd! (my/tab-select-n 5))
+        :nvime "s-6" (cmd! (my/tab-select-n 6))
+        :nvime "s-7" (cmd! (my/tab-select-n 7))
+        :nvime "s-8" (cmd! (my/tab-select-n 8))
+        :nvime "s-9" (cmd! (my/tab-select-n 9))))
 
 ;; =============================================================================
 ;; VTERM - TERMINAL EMULATOR
