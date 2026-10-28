@@ -690,6 +690,28 @@
         :nvime "s-9" (cmd! (my/tab-select-n 9))))
 
 ;; =============================================================================
+;; TABS POR-CONTEXTO: cada workspace (persp) tiene su propio set de tabs
+;; =============================================================================
+;; Modelo tipo tmux: contexto (persp, con buffers aislados) -> tabs (tab-bar) ->
+;; splits. tab-bar es global al frame por defecto, asi que sin esto podias tener
+;; un workspace en una tab y otro en otra. Este glue guarda el set de tabs del
+;; persp que se desactiva y restaura el del persp activado -> cada contexto
+;; tiene SUS tabs independientes. (Verificado: switch de contexto conserva las
+;; tabs de cada uno.)
+(after! persp-mode
+  (defun my/persp-save-tabs (&rest _)
+    "Guardar el set de tabs del frame en el persp que se desactiva."
+    (when-let ((p (get-current-persp)))
+      (set-persp-parameter 'saved-tabs (frame-parameter nil 'tabs) p)))
+  (defun my/persp-load-tabs (&rest _)
+    "Restaurar el set de tabs del persp activado (nil = arranca con una tab)."
+    (let ((p (get-current-persp)))
+      (set-frame-parameter nil 'tabs (and p (persp-parameter 'saved-tabs p)))
+      (tab-bar--update-tab-bar-lines t)))
+  (add-hook 'persp-before-deactivate-functions #'my/persp-save-tabs)
+  (add-hook 'persp-activated-functions #'my/persp-load-tabs))
+
+;; =============================================================================
 ;; VTERM - TERMINAL EMULATOR
 ;; =============================================================================
 (after! vterm
