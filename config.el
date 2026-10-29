@@ -90,7 +90,7 @@
 
 (setq doom-font (font-spec :family "Iosevka" :size 18 :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "Iosevka" :size 18))
-(setq doom-theme 'doom-gruvbox)
+(setq doom-theme 'doom-tomorrow-day)
 
 ;; Comentarios en italica (como code_style.comments = "italic" en nvim)
 (custom-set-faces!
@@ -715,6 +715,16 @@
       (tab-bar--update-tab-bar-lines t)))
   (add-hook 'persp-before-deactivate-functions #'my/persp-save-tabs)
   (add-hook 'persp-activated-functions #'my/persp-load-tabs))
+
+;; =============================================================================
+;; AGENT-SHELL - poder tipear 'q'
+;; =============================================================================
+;; agent-shell deriva de comint (buffer de input) pero bindea q -> quit-window
+;; en su mode-map, y en insert state esa bind del major-mode gana sobre el
+;; self-insert -> no se puede escribir la letra q. La hacemos self-insert en
+;; insert state; en normal state q sigue siendo quit-window para navegar.
+(after! agent-shell
+  (evil-define-key 'insert agent-shell-mode-map (kbd "q") #'self-insert-command))
 
 ;; =============================================================================
 ;; VTERM - TERMINAL EMULATOR
