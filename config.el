@@ -393,7 +393,12 @@
 ;; Python para org-babel
 (setq python-shell-interpreter (if IS-MAC "/opt/homebrew/bin/python3" "python3"))
 (after! org
-  (setq org-babel-python-command (if IS-MAC "/opt/homebrew/bin/python3" "python3")))
+  (setq org-babel-python-command (if IS-MAC "/opt/homebrew/bin/python3" "python3"))
+
+  (map! :map org-mode-map
+        :leader
+        (:prefix ("i" . "insert")
+         :desc "Org table" "t" #'org-table-create)))
 
 ;; Visual fill column para escritura centrada
 (defun my/org-mode-visual-fill ()
@@ -769,3 +774,35 @@
       "#pragma once" \n
       \n
       _ \n)))
+
+;; =============================================================================
+;; MOVER ULTIMA DESCARGA AL DIRECTORIO ACTUAL
+;; =============================================================================
+(defun my/move-last-download (dest)
+  "Mover el ultimo archivo descargado de ~/Downloads a DEST.
+Pregunta el directorio destino en el minibuffer con completion, editable
+inline (como find-file). Por defecto DEST es el directorio del buffer actual.
+Ignora subdirectorios y descargas a medias (.crdownload, .part, .download)."
+  (interactive
+   (list (read-directory-name "Mover ultima descarga a: " default-directory)))
+  (let* ((downloads (expand-file-name "~/Downloads/"))
+         (files (seq-remove
+                 (lambda (f)
+                   (or (file-directory-p f)
+                       (string-match-p "\\.\\(crdownload\\|part\\|download\\)\\'" f)))
+                 (directory-files downloads t directory-files-no-dot-files-regexp)))
+         (latest (car (sort files
+                            (lambda (a b)
+                              (time-less-p
+                               (file-attribute-modification-time (file-attributes b))
+                               (file-attribute-modification-time (file-attributes a))))))))
+    (if (not latest)
+        (message "No hay descargas en %s" downloads)
+      (let ((target (expand-file-name (file-name-nondirectory latest) dest)))
+        (rename-file latest target 1)   ; 1 = pregunta si el destino ya existe
+        (message "Movido %s -> %s" (file-name-nondirectory latest) dest)))))
+
+(map! :leader
+      (:prefix ("f" . "file")
+       (:prefix ("l" . "last")
+        :desc "Mover ultima descarga aqui" "d" #'my/move-last-download)))
